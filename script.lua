@@ -166,7 +166,6 @@ local function showKeyPanel(onSuccess)
 end
 
 local function loadMain()
-    -- Rayfield Classic laden
     local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
     local Window = Rayfield:CreateWindow({
@@ -174,7 +173,8 @@ local function loadMain()
         Icon = 0,
         LoadingTitle = "Splash Scripts",
         LoadingSubtitle = "German Voice Edition",
-        Theme = "Ocean",
+        Theme = "DarkBlue",
+        ShowText = "Splash",
         ToggleUIKeybind = "K",
         DisableRayfieldPrompts = false,
         DisableBuildWarnings = false,
@@ -198,15 +198,54 @@ local function loadMain()
         if flyConn then flyConn:Disconnect(); flyConn = nil end
         if bv then bv:Destroy(); bv = nil end
         if bg then bg:Destroy(); bg = nil end
-        local h = getHum(); if h then h.PlatformStand = false end
+        local h = getHum()
+        if h then
+            h.PlatformStand = false
+            -- Reset animation
+            h:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
     end
 
     local function startFly()
         local hrp = getHRP(); local hum = getHum()
         if not hrp or not hum then return end
         cleanFly(); flyActive = true; hum.PlatformStand = true
+
         bv = Instance.new("BodyVelocity"); bv.MaxForce = Vector3.new(1e9,1e9,1e9); bv.Velocity = Vector3.zero; bv.Parent = hrp
         bg = Instance.new("BodyGyro"); bg.MaxTorque = Vector3.new(1e9,1e9,1e9); bg.D = 50; bg.P = 1200; bg.Parent = hrp
+
+        -- Superman Pose: Charakter liegt flach nach vorne, eine Hand ausgestreckt
+        local char = getChar()
+        if char then
+            -- Tilt den ganzen Charakter nach vorne (Superman Flug-Pose)
+            local function applySupermanPose()
+                local cf = Camera.CFrame
+                -- Rotate HRP so character is horizontal (lying forward)
+                local lookDir = cf.LookVector
+                local flatLook = Vector3.new(lookDir.X, 0, lookDir.Z)
+                if flatLook.Magnitude > 0.01 then
+                    flatLook = flatLook.Unit
+                end
+                -- Tilt forward 80 degrees = Superman pose
+                bg.CFrame = CFrame.new(hrp.Position, hrp.Position + cf.LookVector) * CFrame.Angles(-math.rad(80), 0, 0)
+            end
+
+            -- Animiere Arme in Superman-Position
+            task.spawn(function()
+                task.wait(0.1)
+                local char2 = getChar(); if not char2 then return end
+                -- Rechten Arm nach vorne strecken
+                local rightShoulder = char2:FindFirstChild("Torso") and char2.Torso:FindFirstChild("Right Shoulder")
+                local leftShoulder  = char2:FindFirstChild("Torso") and char2.Torso:FindFirstChild("Left Shoulder")
+                if rightShoulder then
+                    rightShoulder.C0 = CFrame.new(1, 0.5, 0) * CFrame.Angles(0, math.rad(90), math.rad(-90))
+                end
+                if leftShoulder then
+                    leftShoulder.C0 = CFrame.new(-1, 0.5, 0) * CFrame.Angles(0, -math.rad(90), math.rad(90))
+                end
+            end)
+        end
+
         flyConn = RunService.Heartbeat:Connect(function()
             if not flyActive then cleanFly() return end
             local h2 = getHRP(); if not h2 then cleanFly() return end
@@ -218,8 +257,18 @@ local function loadMain()
             if UserInputService:IsKeyDown(Enum.KeyCode.Space)     then dir += Vector3.new(0,1,0) end
             if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.new(0,1,0) end
             local boost = UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) and 4 or 1
-            bv.Velocity = dir.Magnitude > 0 and dir.Unit*(flySpeed*boost) or Vector3.zero
-            bg.CFrame = cf
+            local speed = flySpeed * boost
+
+            if dir.Magnitude > 0 then
+                bv.Velocity = dir.Unit * speed
+                -- Superman-Pose: Charakter kippt in Flugrichtung
+                local targetCFrame = CFrame.new(h2.Position, h2.Position + dir.Unit) * CFrame.Angles(-math.rad(75), 0, 0)
+                bg.CFrame = bg.CFrame:Lerp(targetCFrame, 0.15)
+            else
+                bv.Velocity = Vector3.zero
+                -- Schwebend: aufrecht aber leicht nach vorne geneigt
+                bg.CFrame = bg.CFrame:Lerp(CFrame.new(h2.Position, h2.Position + cf.LookVector) * CFrame.Angles(-math.rad(20), 0, 0), 0.1)
+            end
         end)
     end
 
@@ -227,7 +276,9 @@ local function loadMain()
         Callback = function(v) if v then startFly() else cleanFly() end end })
     FlyTab:CreateSlider({ Name = "Fly Speed", Range = {10,600}, Increment = 5, CurrentValue = 80, Flag = "FlySpd",
         Callback = function(v) flySpeed = v end })
-    FlyTab:CreateParagraph({ Title = "Steuerung", Content = "W/A/S/D · Space = hoch · Shift = runter · Strg = 4x Speed · K = UI toggle" })
+    FlyTab:CreateKeybind({ Name = "Fly Keybind", CurrentKeybind = "F", HoldToInteract = false, Flag = "FlyKey",
+        Callback = function() if flyActive then cleanFly() else startFly() end end })
+    FlyTab:CreateParagraph({ Title = "Steuerung", Content = "W/A/S/D bewegen · Space = hoch · Shift = runter · Strg = 4x Speed\nUI ein/ausblenden: K" })
 
     -- ── FUN TAB ─────────────────────────────────
     local FunTab = Window:CreateTab("Fun", 0)
