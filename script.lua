@@ -272,180 +272,313 @@ local function loadMain()
     nContent.BackgroundTransparency=1; nContent.Text=""; nContent.TextColor3=C.textDim
     nContent.Font=Enum.Font.Gotham; nContent.TextSize=11; nContent.TextXAlignment=Enum.TextXAlignment.Left
 
-    -- Main frame
-    local main = Instance.new("Frame", sg)
-    main.Size = UDim2.fromOffset(680,440); main.AnchorPoint = Vector2.new(0.5,0.5)
-    main.Position = UDim2.fromScale(0.5,0.5); main.BackgroundColor3 = C.bg
-    main.BorderSizePixel=0; mkCorner(main,14); mkStroke(main,C.accent,1.5)
-    mkGrad(main,Color3.fromRGB(5,9,26),Color3.fromRGB(4,7,20),135)
+    -- ── Main window ──────────────────────────────────────────────
+    -- Window constants
+    local WIN_W, WIN_H = 560, 380
+    local TOPBAR_H     = 38
+    local SIDEBAR_W    = 130
 
     -- Shadow glow behind window
     local glowBg = Instance.new("ImageLabel", sg)
-    glowBg.Size=UDim2.fromOffset(750,510); glowBg.AnchorPoint=Vector2.new(0.5,0.5)
-    glowBg.Position=UDim2.fromScale(0.5,0.5); glowBg.BackgroundTransparency=1
+    glowBg.Size=UDim2.fromOffset(WIN_W+120, WIN_H+120)
+    glowBg.AnchorPoint=Vector2.new(0.5,0.5)
+    glowBg.Position=UDim2.fromScale(0.5,0.5)
+    glowBg.BackgroundTransparency=1
     glowBg.Image="rbxassetid://5028857084"
-    glowBg.ImageColor3=Color3.fromRGB(20,60,200); glowBg.ImageTransparency=0.75; glowBg.ZIndex=0
+    glowBg.ImageColor3=Color3.fromRGB(20,60,200); glowBg.ImageTransparency=0.72; glowBg.ZIndex=0
 
-    -- Top bar
+    local main = Instance.new("Frame", sg)
+    main.Size = UDim2.fromOffset(WIN_W, WIN_H)
+    main.AnchorPoint = Vector2.new(0.5,0.5)
+    main.Position = UDim2.fromScale(0.5,0.5)
+    main.BackgroundColor3 = C.bg
+    main.BorderSizePixel=0
+    mkCorner(main,12)
+    mkStroke(main, Color3.fromRGB(50,120,255), 1.5)
+    mkGrad(main, Color3.fromRGB(8,14,40), Color3.fromRGB(4,7,18), 135)
+
+    -- ── Top bar ───────────────────────────────────────────────────
     local topBar = Instance.new("Frame", main)
-    topBar.Size=UDim2.new(1,0,0,44); topBar.BackgroundColor3=Color3.fromRGB(6,10,28)
+    topBar.Size=UDim2.new(1,0,0,TOPBAR_H)
+    topBar.BackgroundColor3=Color3.fromRGB(8,15,48)
     topBar.BorderSizePixel=0; topBar.ZIndex=3
-    mkGrad(topBar,Color3.fromRGB(8,16,50),Color3.fromRGB(5,9,28),90)
-
+    -- Visible gradient from lighter top to darker bottom
+    mkGrad(topBar, Color3.fromRGB(12,22,62), Color3.fromRGB(5,9,28), 90)
+    -- Rounded top corners only — use same corner as main window
+    mkCorner(topBar, 12)
+    -- Thin bottom separator with glow
     local topLine = Instance.new("Frame", main)
-    topLine.Size=UDim2.new(1,0,0,2); topLine.Position=UDim2.fromOffset(0,44)
+    topLine.Size=UDim2.new(1,0,0,1); topLine.Position=UDim2.fromOffset(0,TOPBAR_H)
     topLine.BackgroundColor3=C.accent; topLine.BorderSizePixel=0; topLine.ZIndex=4
-    mkGrad(topLine,Color3.fromRGB(15,50,200),C.accentGlow,0)
+    mkGrad(topLine, Color3.fromRGB(20,60,220), C.accentGlow, 0)
 
+    -- Logo
     local logoLbl = Instance.new("TextLabel", topBar)
-    logoLbl.Size=UDim2.new(0,200,1,0); logoLbl.Position=UDim2.fromOffset(16,0)
+    logoLbl.Size=UDim2.new(0,200,1,0); logoLbl.Position=UDim2.fromOffset(14,0)
     logoLbl.BackgroundTransparency=1; logoLbl.Text="SPLASH SCRIPTS"
-    logoLbl.TextColor3=Color3.fromRGB(240,248,255); logoLbl.Font=Enum.Font.GothamBold
-    logoLbl.TextSize=16; logoLbl.TextXAlignment=Enum.TextXAlignment.Left; logoLbl.ZIndex=4
+    logoLbl.TextColor3=Color3.fromRGB(235,245,255)
+    logoLbl.Font=Enum.Font.GothamBold; logoLbl.TextSize=15
+    logoLbl.TextXAlignment=Enum.TextXAlignment.Left; logoLbl.ZIndex=4
 
     local versionLbl = Instance.new("TextLabel", topBar)
-    versionLbl.Size=UDim2.new(0,100,1,0); versionLbl.Position=UDim2.fromOffset(220,0)
+    versionLbl.Size=UDim2.new(0,60,1,0); versionLbl.Position=UDim2.fromOffset(215,0)
     versionLbl.BackgroundTransparency=1; versionLbl.Text="v7.0"
     versionLbl.TextColor3=C.textMuted; versionLbl.Font=Enum.Font.Gotham
-    versionLbl.TextSize=12; versionLbl.TextXAlignment=Enum.TextXAlignment.Left; versionLbl.ZIndex=4
+    versionLbl.TextSize=11; versionLbl.TextXAlignment=Enum.TextXAlignment.Left; versionLbl.ZIndex=4
 
-    -- Toggle UI button
-    local toggleBtn=Instance.new("TextButton",topBar); toggleBtn.Size=UDim2.fromOffset(28,28)
-    toggleBtn.Position=UDim2.new(1,-38,0.5,-14); toggleBtn.BackgroundColor3=C.card
-    toggleBtn.Text="—"; toggleBtn.TextColor3=C.textDim; toggleBtn.Font=Enum.Font.GothamBold
-    toggleBtn.TextSize=14; toggleBtn.BorderSizePixel=0; toggleBtn.ZIndex=5; mkCorner(toggleBtn,6)
-    local uiVisible = true
-    local contentArea = Instance.new("Frame", main)
-    toggleBtn.MouseButton1Click:Connect(function()
-        uiVisible = not uiVisible
-        contentArea.Visible = uiVisible
-        toggleBtn.Text = uiVisible and "—" or "+"
+    -- Minimize button (—) — collapses content area, tweens height to 38px
+    local minimizeBtn=Instance.new("TextButton",topBar)
+    minimizeBtn.Size=UDim2.fromOffset(26,26)
+    minimizeBtn.Position=UDim2.new(1,-36,0.5,-13)
+    minimizeBtn.BackgroundColor3=Color3.fromRGB(12,22,58)
+    minimizeBtn.Text="—"; minimizeBtn.TextColor3=C.textDim
+    minimizeBtn.Font=Enum.Font.GothamBold; minimizeBtn.TextSize=13
+    minimizeBtn.BorderSizePixel=0; minimizeBtn.ZIndex=5
+    mkCorner(minimizeBtn,6)
+    mkStroke(minimizeBtn, Color3.fromRGB(35,70,160), 1)
+
+    minimizeBtn.MouseEnter:Connect(function()
+        tween(minimizeBtn,{BackgroundColor3=Color3.fromRGB(20,40,100),TextColor3=C.text})
     end)
-    UserInputService.InputBegan:Connect(function(input, gpe)
-        if gpe then return end
-        if input.KeyCode == Enum.KeyCode.K then
-            uiVisible = not uiVisible
-            contentArea.Visible = uiVisible
-            toggleBtn.Text = uiVisible and "—" or "+"
+    minimizeBtn.MouseLeave:Connect(function()
+        tween(minimizeBtn,{BackgroundColor3=Color3.fromRGB(12,22,58),TextColor3=C.textDim})
+    end)
+
+    -- Content area (everything below the top bar)
+    local contentArea = Instance.new("Frame", main)
+    contentArea.Size=UDim2.new(1,0,1,-TOPBAR_H-1)
+    contentArea.Position=UDim2.fromOffset(0,TOPBAR_H+1)
+    contentArea.BackgroundTransparency=1; contentArea.BorderSizePixel=0; contentArea.ZIndex=2
+
+    -- Minimize state
+    local minimized = false
+    minimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        if minimized then
+            -- Hide content, shrink window
+            contentArea.Visible = false
+            minimizeBtn.Text = "+"
+            tween(main, {Size=UDim2.fromOffset(WIN_W, TOPBAR_H)}, 0.2, Enum.EasingStyle.Quad)
+        else
+            -- Expand window first, then show content
+            tween(main, {Size=UDim2.fromOffset(WIN_W, WIN_H)}, 0.2, Enum.EasingStyle.Quad)
+            minimizeBtn.Text = "—"
+            task.delay(0.2, function() contentArea.Visible = true end)
         end
     end)
 
-    -- Content area (below top bar)
-    contentArea.Size=UDim2.new(1,0,1,-46); contentArea.Position=UDim2.fromOffset(0,46)
-    contentArea.BackgroundTransparency=1; contentArea.BorderSizePixel=0; contentArea.ZIndex=2
+    -- K key also toggles minimize
+    UserInputService.InputBegan:Connect(function(input, gpe)
+        if gpe then return end
+        if input.KeyCode == Enum.KeyCode.K then
+            minimizeBtn.MouseButton1Click:Fire()
+        end
+    end)
 
-    -- Sidebar
-    local sidebar=Instance.new("Frame",contentArea); sidebar.Size=UDim2.fromOffset(140,394)
-    sidebar.BackgroundColor3=C.sidebar; sidebar.BorderSizePixel=0; sidebar.ZIndex=3
-    mkGrad(sidebar,Color3.fromRGB(7,12,35),Color3.fromRGB(5,9,26),90)
-    local sideStroke=Instance.new("Frame",sidebar); sideStroke.Size=UDim2.new(0,1,1,0)
-    sideStroke.Position=UDim2.new(1,-1,0,0); sideStroke.BackgroundColor3=C.stroke
-    sideStroke.BorderSizePixel=0; sideStroke.ZIndex=4
+    -- ── Drag functionality ────────────────────────────────────────
+    do
+        local dragging, dragStart, startPos = false, nil, nil
+        topBar.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                dragStart = input.Position
+                startPos  = main.Position
+            end
+        end)
+        topBar.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = false
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = input.Position - dragStart
+                main.Position = UDim2.new(
+                    startPos.X.Scale, startPos.X.Offset + delta.X,
+                    startPos.Y.Scale, startPos.Y.Offset + delta.Y
+                )
+                -- Keep glow in sync
+                glowBg.Position = UDim2.new(
+                    main.Position.X.Scale, main.Position.X.Offset,
+                    main.Position.Y.Scale, main.Position.Y.Offset
+                )
+            end
+        end)
+    end
 
-    -- Content panel
-    local panel=Instance.new("Frame",contentArea); panel.Size=UDim2.new(1,-140,1,0)
-    panel.Position=UDim2.fromOffset(140,0); panel.BackgroundTransparency=1
-    panel.BorderSizePixel=0; panel.ZIndex=2
+    -- ── Sidebar ───────────────────────────────────────────────────
+    local sidebar=Instance.new("Frame",contentArea)
+    sidebar.Size=UDim2.new(0,SIDEBAR_W,1,0)
+    sidebar.BackgroundColor3=Color3.fromRGB(5,9,26)
+    sidebar.BorderSizePixel=0; sidebar.ZIndex=3
+    -- Strong dark gradient for premium look
+    mkGrad(sidebar, Color3.fromRGB(6,11,30), Color3.fromRGB(3,6,18), 90)
 
-    -- Tab system
+    -- Right border separator
+    local sideStroke=Instance.new("Frame",sidebar)
+    sideStroke.Size=UDim2.new(0,1,1,0); sideStroke.Position=UDim2.new(1,-1,0,0)
+    sideStroke.BackgroundColor3=Color3.fromRGB(30,60,140); sideStroke.BorderSizePixel=0; sideStroke.ZIndex=4
+
+    -- Sidebar top accent bar
+    local sideTopAccent=Instance.new("Frame",sidebar)
+    sideTopAccent.Size=UDim2.new(1,0,0,2); sideTopAccent.BackgroundColor3=C.accent
+    sideTopAccent.BorderSizePixel=0; sideTopAccent.ZIndex=5
+    mkGrad(sideTopAccent, Color3.fromRGB(30,80,220), C.accentGlow, 0)
+
+    -- ── Content panel ─────────────────────────────────────────────
+    local panel=Instance.new("Frame",contentArea)
+    panel.Size=UDim2.new(1,-SIDEBAR_W,1,0)
+    panel.Position=UDim2.fromOffset(SIDEBAR_W,0)
+    panel.BackgroundTransparency=1; panel.BorderSizePixel=0; panel.ZIndex=2
+
+    -- ── Tab system ────────────────────────────────────────────────
     local tabs = {}
     local activeTab = nil
-    local tabButtons = {}
 
     local function createTab(name)
         -- Sidebar button
-        local btn=Instance.new("TextButton",sidebar); btn.Size=UDim2.new(1,0,0,40)
-        btn.BackgroundColor3=C.sidebar; btn.Text=""; btn.BorderSizePixel=0; btn.ZIndex=4
-        local btnLabel=Instance.new("TextLabel",btn); btnLabel.Size=UDim2.new(1,-16,1,0)
-        btnLabel.Position=UDim2.fromOffset(16,0); btnLabel.BackgroundTransparency=1
-        btnLabel.Text=name; btnLabel.TextColor3=C.textDim; btnLabel.Font=Enum.Font.GothamBold
-        btnLabel.TextSize=13; btnLabel.TextXAlignment=Enum.TextXAlignment.Left; btnLabel.ZIndex=5
-        local activeBar=Instance.new("Frame",btn); activeBar.Size=UDim2.fromOffset(3,24)
-        activeBar.Position=UDim2.new(0,0,0.5,-12); activeBar.BackgroundColor3=C.accent
-        activeBar.BorderSizePixel=0; activeBar.ZIndex=5; mkCorner(activeBar,2)
+        local btn=Instance.new("TextButton",sidebar)
+        btn.Size=UDim2.new(1,0,0,38)
+        btn.BackgroundColor3=Color3.fromRGB(5,9,26)
+        btn.Text=""; btn.BorderSizePixel=0; btn.ZIndex=4
+
+        -- Active background glow (hidden by default)
+        local activeGlow=Instance.new("Frame",btn)
+        activeGlow.Size=UDim2.fromScale(1,1); activeGlow.BackgroundColor3=Color3.fromRGB(15,35,90)
+        activeGlow.BorderSizePixel=0; activeGlow.ZIndex=4; activeGlow.BackgroundTransparency=1
+        mkGrad(activeGlow, Color3.fromRGB(20,50,120), Color3.fromRGB(5,9,26), 0)
+
+        -- Left active indicator bar
+        local activeBar=Instance.new("Frame",btn)
+        activeBar.Size=UDim2.fromOffset(3,22)
+        activeBar.Position=UDim2.new(0,0,0.5,-11)
+        activeBar.BackgroundColor3=Color3.fromRGB(60,140,255)
+        activeBar.BorderSizePixel=0; activeBar.ZIndex=6
+        mkCorner(activeBar,2)
         activeBar.BackgroundTransparency=1
 
-        -- Content frame
-        local content=Instance.new("ScrollingFrame",panel); content.Size=UDim2.fromScale(1,1)
+        local btnLabel=Instance.new("TextLabel",btn)
+        btnLabel.Size=UDim2.new(1,-18,1,0)
+        btnLabel.Position=UDim2.fromOffset(14,0)
+        btnLabel.BackgroundTransparency=1
+        btnLabel.Text=string.upper(name)
+        btnLabel.TextColor3=C.textMuted
+        btnLabel.Font=Enum.Font.GothamBold
+        btnLabel.TextSize=12
+        btnLabel.TextXAlignment=Enum.TextXAlignment.Left; btnLabel.ZIndex=6
+
+        -- Content scroll frame
+        local content=Instance.new("ScrollingFrame",panel)
+        content.Size=UDim2.fromScale(1,1)
         content.BackgroundTransparency=1; content.BorderSizePixel=0; content.ZIndex=3
         content.ScrollBarThickness=3; content.ScrollBarImageColor3=C.accent
         content.CanvasSize=UDim2.new(0,0,0,0); content.Visible=false
-        local layout=Instance.new("UIListLayout",content); layout.Padding=UDim.new(0,6)
-        layout.SortOrder=Enum.SortOrder.LayoutOrder
-        local padding=Instance.new("UIPadding",content); padding.PaddingLeft=UDim.new(0,10)
-        padding.PaddingRight=UDim.new(0,10); padding.PaddingTop=UDim.new(0,10)
+        local layout=Instance.new("UIListLayout",content)
+        layout.Padding=UDim.new(0,5); layout.SortOrder=Enum.SortOrder.LayoutOrder
+        local padding=Instance.new("UIPadding",content)
+        padding.PaddingLeft=UDim.new(0,10); padding.PaddingRight=UDim.new(0,10)
+        padding.PaddingTop=UDim.new(0,10)
 
         layout.Changed:Connect(function()
             content.CanvasSize=UDim2.new(0,0,0,layout.AbsoluteContentSize.Y+20)
         end)
 
-        local tab = {content=content, btn=btn, label=btnLabel, bar=activeBar, order=#tabs+1}
+        local tab = {content=content, btn=btn, label=btnLabel, bar=activeBar, glow=activeGlow, order=1}
         tabs[name] = tab
 
         btn.MouseButton1Click:Connect(function()
             if activeTab then
-                tabs[activeTab].content.Visible=false
-                tabs[activeTab].label.TextColor3=C.textDim
-                tabs[activeTab].bar.BackgroundTransparency=1
-                tabs[activeTab].btn.BackgroundColor3=C.sidebar
+                local at=tabs[activeTab]
+                at.content.Visible=false
+                at.label.TextColor3=C.textMuted
+                tween(at.bar,{BackgroundTransparency=1})
+                tween(at.glow,{BackgroundTransparency=1})
+                tween(at.btn,{BackgroundColor3=Color3.fromRGB(5,9,26)})
             end
             activeTab=name
             content.Visible=true
-            btnLabel.TextColor3=C.text
-            activeBar.BackgroundTransparency=0
-            btn.BackgroundColor3=C.cardHover
+            tween(btnLabel,{TextColor3=Color3.fromRGB(210,230,255)})
+            tween(activeBar,{BackgroundTransparency=0},0.15)
+            tween(activeGlow,{BackgroundTransparency=0.45},0.15)
+            tween(btn,{BackgroundColor3=Color3.fromRGB(10,20,55)})
         end)
-        btn.MouseEnter:Connect(function() if activeTab~=name then tween(btn,{BackgroundColor3=C.card}) end end)
-        btn.MouseLeave:Connect(function() if activeTab~=name then tween(btn,{BackgroundColor3=C.sidebar}) end end)
+        btn.MouseEnter:Connect(function()
+            if activeTab~=name then
+                tween(btn,{BackgroundColor3=Color3.fromRGB(8,15,38)})
+                tween(btnLabel,{TextColor3=C.textDim})
+            end
+        end)
+        btn.MouseLeave:Connect(function()
+            if activeTab~=name then
+                tween(btn,{BackgroundColor3=Color3.fromRGB(5,9,26)})
+                tween(btnLabel,{TextColor3=C.textMuted})
+            end
+        end)
 
         return tab
     end
 
-    -- Element builders
+    -- ── Element builders ──────────────────────────────────────────
+    -- Card gradient colors (more visible depth)
+    local EL_C0 = Color3.fromRGB(10,18,52)
+    local EL_C1 = Color3.fromRGB(7,12,36)
+
     local function addSection(tab, text)
-        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,24)
+        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,22)
         f.BackgroundTransparency=1; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
         local l=Instance.new("TextLabel",f); l.Size=UDim2.fromScale(1,1); l.BackgroundTransparency=1
-        l.Text=text; l.TextColor3=C.accent; l.Font=Enum.Font.GothamBold; l.TextSize=11
+        l.Text=string.upper(text); l.TextColor3=Color3.fromRGB(45,120,255)
+        l.Font=Enum.Font.GothamBold; l.TextSize=10
         l.TextXAlignment=Enum.TextXAlignment.Left
-        local line=Instance.new("Frame",f); line.Size=UDim2.new(1,0,0,1); line.Position=UDim2.new(0,0,1,-1)
+        local line=Instance.new("Frame",f); line.Size=UDim2.new(1,0,0,1)
+        line.Position=UDim2.new(0,0,1,-1)
         line.BackgroundColor3=C.stroke; line.BorderSizePixel=0
-        mkGrad(line,C.stroke,Color3.fromRGB(4,8,22),0)
+        mkGrad(line,Color3.fromRGB(45,100,220),Color3.fromRGB(4,8,22),0)
     end
 
     local function addButton(tab, name, cb)
-        local f=Instance.new("TextButton",tab.content); f.Size=UDim2.new(1,0,0,36)
-        f.BackgroundColor3=C.card; f.Text=""; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
-        mkCorner(f,8); mkStroke(f,C.stroke,1)
-        mkGrad(f,Color3.fromRGB(12,22,60),Color3.fromRGB(8,15,42),90)
+        local f=Instance.new("TextButton",tab.content); f.Size=UDim2.new(1,0,0,32)
+        f.BackgroundColor3=EL_C0; f.Text=""; f.BorderSizePixel=0
+        f.LayoutOrder=tab.order; tab.order=tab.order+1
+        mkCorner(f,7); mkStroke(f,C.stroke,1)
+        mkGrad(f, EL_C0, EL_C1, 90)
         local l=Instance.new("TextLabel",f); l.Size=UDim2.new(1,-16,1,0); l.Position=UDim2.fromOffset(12,0)
-        l.BackgroundTransparency=1; l.Text=name; l.TextColor3=C.text; l.Font=Enum.Font.GothamBold
-        l.TextSize=13; l.TextXAlignment=Enum.TextXAlignment.Left
-        f.MouseEnter:Connect(function() tween(f,{BackgroundColor3=C.cardHover}); tween(f:FindFirstChildOfClass("UIStroke"),{Color=C.strokeHov}) end)
-        f.MouseLeave:Connect(function() tween(f,{BackgroundColor3=C.card}); tween(f:FindFirstChildOfClass("UIStroke"),{Color=C.stroke}) end)
+        l.BackgroundTransparency=1; l.Text=name; l.TextColor3=C.text
+        l.Font=Enum.Font.GothamBold; l.TextSize=12; l.TextXAlignment=Enum.TextXAlignment.Left
+        f.MouseEnter:Connect(function()
+            tween(f,{BackgroundColor3=C.cardHover})
+            tween(f:FindFirstChildOfClass("UIStroke"),{Color=C.strokeHov})
+        end)
+        f.MouseLeave:Connect(function()
+            tween(f,{BackgroundColor3=EL_C0})
+            tween(f:FindFirstChildOfClass("UIStroke"),{Color=C.stroke})
+        end)
         f.MouseButton1Click:Connect(function()
             tween(f,{BackgroundColor3=C.accent},0.08)
-            task.delay(0.15,function() tween(f,{BackgroundColor3=C.card},0.15) end)
+            task.delay(0.15,function() tween(f,{BackgroundColor3=EL_C0},0.15) end)
             cb()
         end)
         return f
     end
 
     local function addToggle(tab, name, default, flag, cb)
-        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,36)
-        f.BackgroundColor3=C.card; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
-        mkCorner(f,8); mkStroke(f,C.stroke,1)
-        mkGrad(f,Color3.fromRGB(12,22,60),Color3.fromRGB(8,15,42),90)
-        local l=mkLabel(f,name,13,C.text,Enum.Font.GothamBold); l.Size=UDim2.new(1,-60,1,0); l.Position=UDim2.fromOffset(12,0)
+        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,32)
+        f.BackgroundColor3=EL_C0; f.BorderSizePixel=0
+        f.LayoutOrder=tab.order; tab.order=tab.order+1
+        mkCorner(f,7); mkStroke(f,C.stroke,1)
+        mkGrad(f, EL_C0, EL_C1, 90)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        l.Size=UDim2.new(1,-56,1,0); l.Position=UDim2.fromOffset(12,0)
         local val=default
-        local knobBg=Instance.new("Frame",f); knobBg.Size=UDim2.fromOffset(36,20)
-        knobBg.Position=UDim2.new(1,-48,0.5,-10); knobBg.BackgroundColor3=val and C.toggle_on or C.toggle_off
-        knobBg.BorderSizePixel=0; mkCorner(knobBg,10)
-        local knob=Instance.new("Frame",knobBg); knob.Size=UDim2.fromOffset(16,16)
+        local knobBg=Instance.new("Frame",f); knobBg.Size=UDim2.fromOffset(34,18)
+        knobBg.Position=UDim2.new(1,-44,0.5,-9)
+        knobBg.BackgroundColor3=val and C.toggle_on or C.toggle_off
+        knobBg.BorderSizePixel=0; mkCorner(knobBg,9)
+        local knob=Instance.new("Frame",knobBg); knob.Size=UDim2.fromOffset(14,14)
         knob.Position=val and UDim2.fromOffset(18,2) or UDim2.fromOffset(2,2)
-        knob.BackgroundColor3=Color3.fromRGB(255,255,255); knob.BorderSizePixel=0; mkCorner(knob,8)
-        local btn=Instance.new("TextButton",f); btn.Size=UDim2.fromScale(1,1); btn.BackgroundTransparency=1
-        btn.Text=""; btn.ZIndex=5
+        knob.BackgroundColor3=Color3.fromRGB(255,255,255); knob.BorderSizePixel=0; mkCorner(knob,7)
+        local btn=Instance.new("TextButton",f); btn.Size=UDim2.fromScale(1,1)
+        btn.BackgroundTransparency=1; btn.Text=""; btn.ZIndex=5
         btn.MouseButton1Click:Connect(function()
             val=not val; cb(val)
             tween(knobBg,{BackgroundColor3=val and C.toggle_on or C.toggle_off})
@@ -455,30 +588,34 @@ local function loadMain()
     end
 
     local function addSlider(tab, name, min, max, default, flag, cb)
-        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,50)
-        f.BackgroundColor3=C.card; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
-        mkCorner(f,8); mkStroke(f,C.stroke,1)
-        mkGrad(f,Color3.fromRGB(12,22,60),Color3.fromRGB(8,15,42),90)
-        local l=mkLabel(f,name,13,C.text,Enum.Font.GothamBold); l.Size=UDim2.new(1,-60,0,20); l.Position=UDim2.fromOffset(12,6)
-        local valLbl=Instance.new("TextLabel",f); valLbl.Size=UDim2.fromOffset(50,20)
+        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,46)
+        f.BackgroundColor3=EL_C0; f.BorderSizePixel=0
+        f.LayoutOrder=tab.order; tab.order=tab.order+1
+        mkCorner(f,7); mkStroke(f,C.stroke,1)
+        mkGrad(f, EL_C0, EL_C1, 90)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        l.Size=UDim2.new(1,-60,0,18); l.Position=UDim2.fromOffset(12,6)
+        local valLbl=Instance.new("TextLabel",f); valLbl.Size=UDim2.fromOffset(50,18)
         valLbl.Position=UDim2.new(1,-58,0,6); valLbl.BackgroundTransparency=1
-        valLbl.Text=tostring(default); valLbl.TextColor3=C.accent; valLbl.Font=Enum.Font.GothamBold
-        valLbl.TextSize=12; valLbl.TextXAlignment=Enum.TextXAlignment.Right
-        local track=Instance.new("Frame",f); track.Size=UDim2.new(1,-24,0,6)
-        track.Position=UDim2.new(0,12,1,-14); track.BackgroundColor3=C.slider_bg
+        valLbl.Text=tostring(default); valLbl.TextColor3=C.accent
+        valLbl.Font=Enum.Font.GothamBold; valLbl.TextSize=11
+        valLbl.TextXAlignment=Enum.TextXAlignment.Right
+        local track=Instance.new("Frame",f); track.Size=UDim2.new(1,-22,0,5)
+        track.Position=UDim2.new(0,11,1,-13); track.BackgroundColor3=C.slider_bg
         track.BorderSizePixel=0; mkCorner(track,3); mkStroke(track,C.stroke,1)
-        local fill=Instance.new("Frame",track); fill.Size=UDim2.new((default-min)/(max-min),0,1,0)
+        local fill=Instance.new("Frame",track)
+        fill.Size=UDim2.new((default-min)/(max-min),0,1,0)
         fill.BackgroundColor3=C.accent; fill.BorderSizePixel=0; mkCorner(fill,3)
         mkGrad(fill,C.accent,C.accentGlow,0)
-        local handle=Instance.new("Frame",track); handle.Size=UDim2.fromOffset(12,12)
-        handle.Position=UDim2.new((default-min)/(max-min),0,0.5,-6)
-        handle.BackgroundColor3=Color3.fromRGB(255,255,255); handle.BorderSizePixel=0; mkCorner(handle,6)
+        local handle=Instance.new("Frame",track); handle.Size=UDim2.fromOffset(11,11)
+        handle.Position=UDim2.new((default-min)/(max-min),0,0.5,-5.5)
+        handle.BackgroundColor3=Color3.fromRGB(240,248,255); handle.BorderSizePixel=0; mkCorner(handle,6)
         local dragging=false
         local function updateSlider(x)
             local abs=track.AbsolutePosition.X; local sz=track.AbsoluteSize.X
             local pct=math.clamp((x-abs)/sz,0,1)
             local v=math.floor(min+(max-min)*pct)
-            fill.Size=UDim2.new(pct,0,1,0); handle.Position=UDim2.new(pct,0,0.5,-6)
+            fill.Size=UDim2.new(pct,0,1,0); handle.Position=UDim2.new(pct,0,0.5,-5.5)
             valLbl.Text=tostring(v); cb(v)
         end
         track.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true; updateSlider(i.Position.X) end end)
@@ -488,15 +625,17 @@ local function loadMain()
 
     local function addKeybind(tab, name, default, cb)
         local currentKey = Enum.KeyCode[default] or Enum.KeyCode.F
-        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,36)
-        f.BackgroundColor3=C.card; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
-        mkCorner(f,8); mkStroke(f,C.stroke,1)
-        mkGrad(f,Color3.fromRGB(12,22,60),Color3.fromRGB(8,15,42),90)
-        local l=mkLabel(f,name,13,C.text,Enum.Font.GothamBold); l.Size=UDim2.new(1,-90,1,0); l.Position=UDim2.fromOffset(12,0)
-        local keyBtn=Instance.new("TextButton",f); keyBtn.Size=UDim2.fromOffset(70,24)
-        keyBtn.Position=UDim2.new(1,-78,0.5,-12); keyBtn.BackgroundColor3=C.accentDim
-        keyBtn.Text="["..default.."]"; keyBtn.TextColor3=C.text; keyBtn.Font=Enum.Font.GothamBold
-        keyBtn.TextSize=12; keyBtn.BorderSizePixel=0; mkCorner(keyBtn,6)
+        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,32)
+        f.BackgroundColor3=EL_C0; f.BorderSizePixel=0
+        f.LayoutOrder=tab.order; tab.order=tab.order+1
+        mkCorner(f,7); mkStroke(f,C.stroke,1)
+        mkGrad(f, EL_C0, EL_C1, 90)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        l.Size=UDim2.new(1,-88,1,0); l.Position=UDim2.fromOffset(12,0)
+        local keyBtn=Instance.new("TextButton",f); keyBtn.Size=UDim2.fromOffset(68,22)
+        keyBtn.Position=UDim2.new(1,-76,0.5,-11); keyBtn.BackgroundColor3=C.accentDim
+        keyBtn.Text="["..default.."]"; keyBtn.TextColor3=C.text
+        keyBtn.Font=Enum.Font.GothamBold; keyBtn.TextSize=11; keyBtn.BorderSizePixel=0; mkCorner(keyBtn,5)
         local listening=false
         keyBtn.MouseButton1Click:Connect(function()
             listening=true; keyBtn.Text="..."; keyBtn.BackgroundColor3=C.accent
@@ -512,31 +651,33 @@ local function loadMain()
 
     local function addDropdown(tab, name, options, cb)
         local val=options[1] or ""
-        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,36)
-        f.BackgroundColor3=C.card; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
-        mkCorner(f,8); mkStroke(f,C.stroke,1)
-        mkGrad(f,Color3.fromRGB(12,22,60),Color3.fromRGB(8,15,42),90)
-        local l=mkLabel(f,name,13,C.text,Enum.Font.GothamBold); l.Size=UDim2.new(1,-200,1,0); l.Position=UDim2.fromOffset(12,0)
-        local dBtn=Instance.new("TextButton",f); dBtn.Size=UDim2.fromOffset(170,26)
-        dBtn.Position=UDim2.new(1,-178,0.5,-13); dBtn.BackgroundColor3=C.slider_bg
+        local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,32)
+        f.BackgroundColor3=EL_C0; f.BorderSizePixel=0
+        f.LayoutOrder=tab.order; tab.order=tab.order+1
+        mkCorner(f,7); mkStroke(f,C.stroke,1)
+        mkGrad(f, EL_C0, EL_C1, 90)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        l.Size=UDim2.new(1,-185,1,0); l.Position=UDim2.fromOffset(12,0)
+        local dBtn=Instance.new("TextButton",f); dBtn.Size=UDim2.fromOffset(162,22)
+        dBtn.Position=UDim2.new(1,-170,0.5,-11); dBtn.BackgroundColor3=C.slider_bg
         dBtn.Text=val; dBtn.TextColor3=C.text; dBtn.Font=Enum.Font.Gotham
-        dBtn.TextSize=12; dBtn.BorderSizePixel=0; mkCorner(dBtn,6); mkStroke(dBtn,C.stroke,1)
+        dBtn.TextSize=11; dBtn.BorderSizePixel=0; mkCorner(dBtn,5); mkStroke(dBtn,C.stroke,1)
         local open=false; local dropFrame
         dBtn.MouseButton1Click:Connect(function()
             open=not open
             if open then
                 dropFrame=Instance.new("Frame",sg); dropFrame.ZIndex=100
-                dropFrame.Size=UDim2.fromOffset(170,math.min(#options,6)*32+4)
+                dropFrame.Size=UDim2.fromOffset(162,math.min(#options,6)*30+4)
                 local abs=dBtn.AbsolutePosition
-                dropFrame.Position=UDim2.fromOffset(abs.X,abs.Y+30)
+                dropFrame.Position=UDim2.fromOffset(abs.X,abs.Y+26)
                 dropFrame.BackgroundColor3=Color3.fromRGB(8,14,44); dropFrame.BorderSizePixel=0
-                mkCorner(dropFrame,8); mkStroke(dropFrame,C.accent,1)
+                mkCorner(dropFrame,7); mkStroke(dropFrame,C.accent,1)
                 local dl=Instance.new("UIListLayout",dropFrame); dl.SortOrder=Enum.SortOrder.LayoutOrder
                 for i,opt in ipairs(options) do
-                    local ob=Instance.new("TextButton",dropFrame); ob.Size=UDim2.new(1,0,0,32)
+                    local ob=Instance.new("TextButton",dropFrame); ob.Size=UDim2.new(1,0,0,30)
                     ob.BackgroundColor3=Color3.fromRGB(8,14,44); ob.Text=opt
-                    ob.TextColor3=opt==val and C.accent or C.text; ob.Font=Enum.Font.Gotham
-                    ob.TextSize=12; ob.BorderSizePixel=0; ob.LayoutOrder=i
+                    ob.TextColor3=opt==val and C.accent or C.text
+                    ob.Font=Enum.Font.Gotham; ob.TextSize=11; ob.BorderSizePixel=0; ob.LayoutOrder=i
                     ob.MouseEnter:Connect(function() tween(ob,{BackgroundColor3=C.card}) end)
                     ob.MouseLeave:Connect(function() tween(ob,{BackgroundColor3=Color3.fromRGB(8,14,44)}) end)
                     ob.MouseButton1Click:Connect(function()
@@ -549,8 +690,8 @@ local function loadMain()
         return {getValue=function() return val end}
     end
 
-    -- Position sidebar buttons
-    local btnY = 10
+    -- Position sidebar buttons (stacked from y=8 with 2px gap)
+    local btnY = 8
     local function registerTabBtn(tab)
         tab.btn.Position = UDim2.fromOffset(0, btnY)
         btnY = btnY + 40
