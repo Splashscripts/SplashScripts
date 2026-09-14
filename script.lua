@@ -39,136 +39,332 @@ end
 -- ════════════════════════════════════════════════════════════
 
 local THEME = {
-    -- Fenster
-    WindowColor          = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(5,  10, 28)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(8,  16, 42)),
+    -- ── Fenster ──────────────────────────────────────────
+    -- Sehr tiefer, fast schwarzer Navy-Hintergrund mit leichtem Blau-Schimmer
+    WindowColor = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(4,   7,  22)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(6,  11,  30)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(4,   8,  25)),
     }),
-    ShadowColor          = Color3.fromRGB(0, 3, 12),
-    LiveAnimation        = true,
+    ShadowColor   = Color3.fromRGB(0, 2, 8),
+    LiveAnimation = true,   -- sanfter Gradient-Drift
 
-    -- Text
-    TitlingColor         = Color3.fromRGB(235, 245, 255),
-    ContentColor         = Color3.fromRGB(170, 195, 240),
-    ElementTextHoverColor= Color3.fromRGB(255, 255, 255),
+    -- ── Schriften & Text ─────────────────────────────────
+    TitleFont             = Enum.Font.GothamBold,
+    Font                  = Enum.Font.Gotham,
+    TitlingColor          = Color3.fromRGB(230, 242, 255),
+    ContentColor          = Color3.fromRGB(155, 185, 235),
+    ElementTextHoverColor = Color3.fromRGB(255, 255, 255),
+    ActionColor           = Color3.fromRGB(120, 170, 255),
 
-    -- Tabs
-    TabBackgroundColor   = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(18, 38, 95)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 50, 120)),
+    -- ── Oberfläche ───────────────────────────────────────
+    SurfaceStroke      = Color3.fromRGB(18, 38, 100),
+    CornerRoundness    = UDim.new(0, 14),
+    PillCornerRadius   = UDim.new(0, 12),
+    ElementCornerRadius= UDim.new(0, 10),
+
+    -- ── Tabs (Sidebar) ───────────────────────────────────
+    -- Aktiver Tab leuchtet in sattem Blau, inaktive sind dezent
+    TabBackgroundColor = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 45, 115)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 30,  85)),
     }),
-    TabColor             = Color3.fromRGB(160, 200, 255),
-    TabStroke            = ColorSequence.new(Color3.fromRGB(40, 80, 180)),
-
-    -- Elemente
-    ElementGradient      = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(12, 22, 58)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 30, 75)),
+    TabColor           = Color3.fromRGB(170, 210, 255),
+    TabStroke          = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(55,  110, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(25,   60, 180)),
     }),
-    ElementStroke        = Color3.fromRGB(28, 58, 145),
-    ElementStrokeHover   = Color3.fromRGB(60, 130, 255),
-    ElementTransparency  = 0,
 
-    -- Akzent  (Toggles, Slider-Fill, Buttons aktiv)
-    AccentColor          = Color3.fromRGB(40, 115, 255),
-    AccentStroke         = Color3.fromRGB(70, 150, 255),
-    AccentGlow           = 0.4,
-
-    -- Slider
-    SliderBackground     = Color3.fromRGB(8,  16, 45),
-    SliderBackgroundHover= Color3.fromRGB(14, 26, 65),
-    SliderProgressColor  = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 100, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(90, 170, 255)),
+    -- ── Elemente (Buttons, Toggles, etc.) ────────────────
+    -- Dunkler Element-Hintergrund mit subtiler Tiefe
+    ElementGradient = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 18, 50)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(13, 23, 62)),
     }),
-    SliderHandle         = Color3.fromRGB(120, 180, 255),
-    SliderStroke         = Color3.fromRGB(30, 70, 160),
+    ElementStroke             = Color3.fromRGB(24, 50, 130),
+    ElementStrokeGradient     = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 90, 200)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 40, 120)),
+    }),
+    ElementStrokeHover        = Color3.fromRGB(65, 140, 255),
+    ElementStrokeHoverTransparency = 0,
+    ElementTransparency       = 0,
+    ElementStrokeTransparency = 0,
+    StatBackground            = Color3.fromRGB(8, 14, 40),
 
-    -- Toggle
-    ToggleTrackColor     = Color3.fromRGB(8, 16, 45),
-    ToggleTrackTransparency = 0,
-    ToggleKnobOffColor   = Color3.fromRGB(80, 110, 170),
+    -- ── Akzent — leuchtendes Elektrisch-Blau ─────────────
+    AccentColor  = Color3.fromRGB(45, 120, 255),
+    AccentStroke = Color3.fromRGB(80, 160, 255),
+    AccentGlow   = 0.35,   -- 0 = voll sichtbar, 1 = unsichtbar
 
-    -- Felder & Dropdowns
-    FieldBackground      = Color3.fromRGB(8, 14, 40),
-    FieldGlow            = Color3.fromRGB(30, 80, 220),
-    PlaceholderColor     = Color3.fromRGB(80, 110, 180),
-    DropdownHighlight    = Color3.fromRGB(25, 65, 160),
+    -- ── Slider ───────────────────────────────────────────
+    SliderBackground      = Color3.fromRGB(7,  13, 38),
+    SliderBackgroundHover = Color3.fromRGB(11, 20, 55),
+    SliderProgressColor   = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 120, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 180, 255)),
+    }),
+    SliderStroke  = Color3.fromRGB(25, 60, 155),
+    SliderHandle  = Color3.fromRGB(130, 190, 255),
 
-    -- Oberfläche
-    SurfaceStroke        = Color3.fromRGB(22, 45, 110),
-    CornerRoundness      = UDim.new(0, 12),
-    PillCornerRadius     = UDim.new(0, 10),
-    ElementCornerRadius  = UDim.new(0, 9),
+    -- ── Toggle ───────────────────────────────────────────
+    ToggleTrackColor          = Color3.fromRGB(7, 13, 38),
+    ToggleTrackTransparency   = 0,
+    ToggleKnobOffColor        = Color3.fromRGB(65, 95, 160),
+    ToggleKnobOffTransparency = 0,
+    DarkToggleOverlay         = false,
+
+    -- ── Felder & Dropdown ────────────────────────────────
+    FieldBackground   = Color3.fromRGB(6, 11, 34),
+    FieldTransparency = 0,
+    FieldGlow         = Color3.fromRGB(35, 90, 230),
+    PlaceholderColor  = Color3.fromRGB(65, 95, 165),
+    DropdownHighlight = Color3.fromRGB(22, 55, 150),
+
+    -- ── Popup Buttons ────────────────────────────────────
+    NeutralButton      = Color3.fromRGB(14, 24, 65),
+    NeutralButtonHover = Color3.fromRGB(20, 38, 95),
+    NeutralButtonStroke= Color3.fromRGB(30, 65, 160),
+    ErrorColor         = Color3.fromRGB(255, 65, 65),
+    ErrorStrokeColor   = Color3.fromRGB(200, 40, 40),
 }
 
 -- ════════════════════════════════════════════════════════════
---  KEY SYSTEM
+--  KEY SYSTEM  —  Custom GUI
 -- ════════════════════════════════════════════════════════════
 
-local VALID_KEY     = "SplashScripts2026!"
-local DISCORD_LINK  = "https://discord.gg/eyzfsAjpSr"
-local KEY_FILE      = "SplashKey.txt"
+local VALID_KEY    = "SplashScripts2026!"
+local DISCORD_LINK = "https://discord.gg/eyzfsAjpSr"
+local KEY_FILE     = "SplashKey.txt"
 
-local function saveKey(key)
-    pcall(function() writefile(KEY_FILE, key) end)
-end
+local function saveKey(k)  pcall(function() writefile(KEY_FILE, k) end) end
+local function loadKey()   local ok,v = pcall(function() return readfile(KEY_FILE) end) return ok and v or nil end
 
-local function loadSavedKey()
-    local ok, val = pcall(function() return readfile(KEY_FILE) end)
-    return ok and val or nil
-end
+local keyUnlocked = false
 
--- Prüfe gespeicherten Key
-local savedKey = loadSavedKey()
-if savedKey ~= VALID_KEY then
-    -- Key Fenster bauen
-    local keyWindow = Rayfield:CreateWindow({
-        name          = "Splash Scripts",
-        subtitle      = "Key System",
-        sidebarLayout = false,
-        theme         = THEME,
-        pillLabel     = "Splash",
+if loadKey() ~= VALID_KEY then
+    -- ── Baue eigenes Key-GUI ──────────────────────────────
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "SplashKeyUI"; sg.ResetOnSpawn = false; sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    sg.IgnoreGuiInset = true
+    sg.Parent = LP:WaitForChild("PlayerGui")
+
+    -- Blur
+    local blur = Instance.new("BlurEffect")
+    blur.Size = 20; blur.Parent = game:GetService("Lighting")
+
+    -- Dimmer
+    local dim = Instance.new("Frame")
+    dim.Size = UDim2.fromScale(1,1); dim.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    dim.BackgroundTransparency = 0.35; dim.BorderSizePixel = 0; dim.ZIndex = 1; dim.Parent = sg
+
+    -- Card
+    local card = Instance.new("Frame")
+    card.Size = UDim2.fromOffset(460, 340)
+    card.Position = UDim2.fromScale(0.5, 0.5)
+    card.AnchorPoint = Vector2.new(0.5, 0.5)
+    card.BackgroundColor3 = Color3.fromRGB(6, 11, 30)
+    card.BorderSizePixel = 0; card.ZIndex = 2; card.Parent = sg
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 16)
+    local cardStroke = Instance.new("UIStroke", card)
+    cardStroke.Color = Color3.fromRGB(35, 75, 190); cardStroke.Thickness = 1.5
+
+    -- Gradient auf Card
+    local grad = Instance.new("UIGradient", card)
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(8, 16, 48)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 28)),
     })
+    grad.Rotation = 135
 
-    local keyTab = keyWindow:CreateTab({ name = "Key eingeben", icon = 0 })
+    -- Glow hinter Card
+    local glow = Instance.new("ImageLabel")
+    glow.Size = UDim2.fromOffset(520, 400)
+    glow.Position = UDim2.fromScale(0.5, 0.5); glow.AnchorPoint = Vector2.new(0.5,0.5)
+    glow.BackgroundTransparency = 1
+    glow.Image = "rbxassetid://5028857084"
+    glow.ImageColor3 = Color3.fromRGB(30, 80, 255); glow.ImageTransparency = 0.7
+    glow.ZIndex = 1; glow.Parent = sg
 
-    keyTab:CreateLabel({ text = "Splash Scripts ist key-geschützt." })
-    keyTab:CreateLabel({ text = "Trete dem Discord bei um deinen Key zu erhalten:" })
-    keyTab:CreateLabel({ text = DISCORD_LINK })
-    keyTab:CreateDivider()
+    -- Logo / Titel
+    local title = Instance.new("TextLabel", card)
+    title.Size = UDim2.new(1, 0, 0, 44)
+    title.Position = UDim2.fromOffset(0, 28)
+    title.BackgroundTransparency = 1
+    title.Text = "SPLASH SCRIPTS"
+    title.TextColor3 = Color3.fromRGB(240, 248, 255)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 22; title.ZIndex = 3
 
-    local keyInput = keyTab:CreateInput({
-        name        = "Key eingeben",
-        placeholder = "SplashScripts...",
-        flag        = "KeyInput",
-        callback    = function() end,
+    -- Subtitle
+    local sub = Instance.new("TextLabel", card)
+    sub.Size = UDim2.new(1, 0, 0, 22)
+    sub.Position = UDim2.fromOffset(0, 68)
+    sub.BackgroundTransparency = 1
+    sub.Text = "Key System  ·  German Voice Edition"
+    sub.TextColor3 = Color3.fromRGB(100, 140, 220)
+    sub.Font = Enum.Font.Gotham; sub.TextSize = 13; sub.ZIndex = 3
+
+    -- Divider
+    local div = Instance.new("Frame", card)
+    div.Size = UDim2.new(0.85, 0, 0, 1); div.Position = UDim2.new(0.075, 0, 0, 100)
+    div.BackgroundColor3 = Color3.fromRGB(30, 60, 150); div.BorderSizePixel = 0; div.ZIndex = 3
+
+    -- Discord Label
+    local discLabel = Instance.new("TextLabel", card)
+    discLabel.Size = UDim2.new(1, -40, 0, 18)
+    discLabel.Position = UDim2.fromOffset(20, 116)
+    discLabel.BackgroundTransparency = 1
+    discLabel.Text = "Trete dem Discord bei, um deinen Key zu erhalten:"
+    discLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
+    discLabel.Font = Enum.Font.Gotham; discLabel.TextSize = 12
+    discLabel.TextXAlignment = Enum.TextXAlignment.Left; discLabel.ZIndex = 3
+
+    -- Discord Box
+    local discBox = Instance.new("Frame", card)
+    discBox.Size = UDim2.new(0.86, 0, 0, 36)
+    discBox.Position = UDim2.new(0.07, 0, 0, 140)
+    discBox.BackgroundColor3 = Color3.fromRGB(10, 20, 55)
+    discBox.BorderSizePixel = 0; discBox.ZIndex = 3
+    Instance.new("UICorner", discBox).CornerRadius = UDim.new(0, 8)
+    local discBoxStroke = Instance.new("UIStroke", discBox)
+    discBoxStroke.Color = Color3.fromRGB(35, 75, 190); discBoxStroke.Thickness = 1
+
+    local discText = Instance.new("TextLabel", discBox)
+    discText.Size = UDim2.new(1, -100, 1, 0)
+    discText.Position = UDim2.fromOffset(12, 0)
+    discText.BackgroundTransparency = 1
+    discText.Text = DISCORD_LINK
+    discText.TextColor3 = Color3.fromRGB(100, 160, 255)
+    discText.Font = Enum.Font.Gotham; discText.TextSize = 12
+    discText.TextXAlignment = Enum.TextXAlignment.Left; discText.ZIndex = 4
+
+    -- Copy Discord Button
+    local copyBtn = Instance.new("TextButton", discBox)
+    copyBtn.Size = UDim2.fromOffset(80, 26)
+    copyBtn.Position = UDim2.new(1, -88, 0.5, -13)
+    copyBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
+    copyBtn.Text = "Kopieren"; copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    copyBtn.Font = Enum.Font.GothamBold; copyBtn.TextSize = 11
+    copyBtn.BorderSizePixel = 0; copyBtn.ZIndex = 5
+    Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 6)
+    copyBtn.MouseButton1Click:Connect(function()
+        pcall(function() setclipboard(DISCORD_LINK) end)
+        copyBtn.Text = "Kopiert!"
+        copyBtn.BackgroundColor3 = Color3.fromRGB(20, 160, 80)
+        task.delay(2, function()
+            copyBtn.Text = "Kopieren"
+            copyBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
+        end)
+    end)
+
+    -- Key Input Label
+    local keyLabel = Instance.new("TextLabel", card)
+    keyLabel.Size = UDim2.new(1, -40, 0, 18)
+    keyLabel.Position = UDim2.fromOffset(20, 192)
+    keyLabel.BackgroundTransparency = 1
+    keyLabel.Text = "Key eingeben:"
+    keyLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
+    keyLabel.Font = Enum.Font.Gotham; keyLabel.TextSize = 12
+    keyLabel.TextXAlignment = Enum.TextXAlignment.Left; keyLabel.ZIndex = 3
+
+    -- Key Input Box
+    local inputBox = Instance.new("Frame", card)
+    inputBox.Size = UDim2.new(0.86, 0, 0, 38)
+    inputBox.Position = UDim2.new(0.07, 0, 0, 216)
+    inputBox.BackgroundColor3 = Color3.fromRGB(10, 20, 55)
+    inputBox.BorderSizePixel = 0; inputBox.ZIndex = 3
+    Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 8)
+    local inputStroke = Instance.new("UIStroke", inputBox)
+    inputStroke.Color = Color3.fromRGB(35, 75, 190); inputStroke.Thickness = 1
+
+    local keyInput = Instance.new("TextBox", inputBox)
+    keyInput.Size = UDim2.new(1, -16, 1, 0)
+    keyInput.Position = UDim2.fromOffset(12, 0)
+    keyInput.BackgroundTransparency = 1
+    keyInput.PlaceholderText = "Key hier eingeben..."
+    keyInput.PlaceholderColor3 = Color3.fromRGB(70, 100, 160)
+    keyInput.Text = ""; keyInput.TextColor3 = Color3.fromRGB(210, 230, 255)
+    keyInput.Font = Enum.Font.Gotham; keyInput.TextSize = 13
+    keyInput.TextXAlignment = Enum.TextXAlignment.Left
+    keyInput.ClearTextOnFocus = false; keyInput.ZIndex = 4
+
+    -- Focus glow
+    keyInput.Focused:Connect(function() inputStroke.Color = Color3.fromRGB(60,130,255) end)
+    keyInput.FocusLost:Connect(function() inputStroke.Color = Color3.fromRGB(35,75,190) end)
+
+    -- Status Label
+    local statusLabel = Instance.new("TextLabel", card)
+    statusLabel.Size = UDim2.new(1, -40, 0, 18)
+    statusLabel.Position = UDim2.fromOffset(20, 262)
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Text = ""; statusLabel.Font = Enum.Font.Gotham; statusLabel.TextSize = 12
+    statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80); statusLabel.ZIndex = 3
+    statusLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+    -- Confirm Button
+    local confirmBtn = Instance.new("TextButton", card)
+    confirmBtn.Size = UDim2.new(0.86, 0, 0, 40)
+    confirmBtn.Position = UDim2.new(0.07, 0, 0, 284)
+    confirmBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 220)
+    confirmBtn.Text = "Bestätigen"; confirmBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    confirmBtn.Font = Enum.Font.GothamBold; confirmBtn.TextSize = 14
+    confirmBtn.BorderSizePixel = 0; confirmBtn.ZIndex = 3
+    Instance.new("UICorner", confirmBtn).CornerRadius = UDim.new(0, 10)
+    local confirmGrad = Instance.new("UIGradient", confirmBtn)
+    confirmGrad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 110, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 60, 180)),
     })
+    confirmGrad.Rotation = 90
 
-    keyTab:CreateButton({
-        name = "Key bestätigen",
-        callback = function()
-            local entered = keyInput.value or ""
-            if entered == VALID_KEY then
-                saveKey(entered)
-                keyWindow:Notify({
-                    title   = "Zugang gewährt",
-                    content = "Willkommen bei Splash Scripts!",
-                })
-                task.wait(1.5)
-                keyWindow:Destroy()
-                -- Script läuft weiter nach dem Destroy
-            else
-                keyWindow:Notify({
-                    title   = "Falscher Key",
-                    content = "Trete dem Discord bei: " .. DISCORD_LINK,
-                })
-            end
-        end,
-    })
+    -- Hover Effekt
+    confirmBtn.MouseEnter:Connect(function()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(50, 130, 255) }):Play()
+    end)
+    confirmBtn.MouseLeave:Connect(function()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(30, 90, 220) }):Play()
+    end)
 
-    -- Warte bis Fenster zerstört (Key korrekt)
-    repeat task.wait(0.2) until keyWindow.destroyed
+    -- Slide-in Animation
+    card.Position = UDim2.new(0.5, 0, 1.2, 0)
+    TweenService:Create(card, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Position = UDim2.fromScale(0.5, 0.5)
+    }):Play()
+
+    -- Key bestätigen
+    confirmBtn.MouseButton1Click:Connect(function()
+        local entered = keyInput.Text
+        if entered == VALID_KEY then
+            saveKey(entered)
+            confirmBtn.Text = "Zugang gewährt!"
+            confirmBtn.BackgroundColor3 = Color3.fromRGB(20, 160, 80)
+            statusLabel.Text = "Willkommen bei Splash Scripts!"
+            statusLabel.TextColor3 = Color3.fromRGB(60, 220, 100)
+            task.delay(1.2, function()
+                TweenService:Create(card, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                    Position = UDim2.new(0.5, 0, -0.8, 0)
+                }):Play()
+                task.wait(0.45)
+                blur:Destroy(); sg:Destroy()
+                keyUnlocked = true
+            end)
+        else
+            statusLabel.Text = "Falscher Key! Discord: " .. DISCORD_LINK
+            statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+            TweenService:Create(inputStroke, TweenInfo.new(0.1), { Color = Color3.fromRGB(255, 60, 60) }):Play()
+            task.delay(1.5, function()
+                TweenService:Create(inputStroke, TweenInfo.new(0.3), { Color = Color3.fromRGB(35, 75, 190) }):Play()
+            end)
+        end
+    end)
+
+    -- Enter = bestätigen
+    keyInput.FocusLost:Connect(function(enter)
+        if enter then confirmBtn.MouseButton1Click:Fire() end
+    end)
+
+    repeat task.wait(0.1) until keyUnlocked
 end
 
 -- ════════════════════════════════════════════════════════════
@@ -178,9 +374,9 @@ end
 local window = Rayfield:CreateWindow({
     name          = "Splash Scripts",
     subtitle      = "German Voice  ·  v4.0",
-    sidebarLayout = true,
-    theme         = THEME,
-    pillLabel     = "Splash",
+    sidebarLayout  = true,
+    theme          = THEME,
+    collapsedLabel = "Splash Scripts",
     configuration = {
         autoSave = true,
         autoLoad = true,
@@ -610,4 +806,3 @@ window:Notify({
     title   = "Splash Scripts v4.0",
     content = "Geladen! Viel Spaß auf German Voice.",
 })
-
