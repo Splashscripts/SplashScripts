@@ -544,7 +544,7 @@ local function loadMain()
         mkGrad(f, EL_C0, EL_C1, 90)
         local l=Instance.new("TextLabel",f); l.Size=UDim2.new(1,-16,1,0); l.Position=UDim2.fromOffset(12,0)
         l.BackgroundTransparency=1; l.Text=name; l.TextColor3=C.text
-        l.Font=Enum.Font.GothamBold; l.TextSize=12; l.TextXAlignment=Enum.TextXAlignment.Left
+        l.Font=Enum.Font.GothamBlack; l.TextSize=12; l.TextXAlignment=Enum.TextXAlignment.Left
         f.MouseEnter:Connect(function()
             tween(f,{BackgroundColor3=C.cardHover})
             tween(f:FindFirstChildOfClass("UIStroke"),{Color=C.strokeHov})
@@ -567,7 +567,7 @@ local function loadMain()
         f.LayoutOrder=tab.order; tab.order=tab.order+1
         mkCorner(f,7); mkStroke(f,C.stroke,1)
         mkGrad(f, EL_C0, EL_C1, 90)
-        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBlack)
         l.Size=UDim2.new(1,-56,1,0); l.Position=UDim2.fromOffset(12,0)
         local val=default
         local knobBg=Instance.new("Frame",f); knobBg.Size=UDim2.fromOffset(34,18)
@@ -593,7 +593,7 @@ local function loadMain()
         f.LayoutOrder=tab.order; tab.order=tab.order+1
         mkCorner(f,7); mkStroke(f,C.stroke,1)
         mkGrad(f, EL_C0, EL_C1, 90)
-        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBlack)
         l.Size=UDim2.new(1,-60,0,18); l.Position=UDim2.fromOffset(12,6)
         local valLbl=Instance.new("TextLabel",f); valLbl.Size=UDim2.fromOffset(50,18)
         valLbl.Position=UDim2.new(1,-58,0,6); valLbl.BackgroundTransparency=1
@@ -738,33 +738,43 @@ local function loadMain()
         bv=Instance.new("BodyVelocity"); bv.MaxForce=Vector3.new(1e9,1e9,1e9); bv.Velocity=Vector3.zero; bv.Parent=hrp
         bg=Instance.new("BodyGyro"); bg.MaxTorque=Vector3.new(1e9,1e9,1e9); bg.D=50; bg.P=1200; bg.Parent=hrp
         task.spawn(function()
-            task.wait(0.1); local c=getChar(); if not c then return end
-            local torso = c:FindFirstChild("Torso")
-            if not torso then return end -- R15 wird nicht unterstützt
-            local rs = torso:FindFirstChild("Right Shoulder")
-            local ls = torso:FindFirstChild("Left Shoulder")
-            local rh = torso:FindFirstChild("Right Hip")
-            local lh = torso:FindFirstChild("Left Hip")
-            local neck = torso:FindFirstChild("Neck")
+            task.wait(0.1)
+            local c = getChar(); if not c then return end
+            local torso  = c:FindFirstChild("Torso")     -- R6
+            local uTorso = c:FindFirstChild("UpperTorso") -- R15
 
-            -- Rechter Arm: nach vorne oben gestreckt (Superman-Arm)
-            if rs then
-                rs.C0 = CFrame.new(1, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
-            end
-            -- Linker Arm: am Körper angelegt nach hinten
-            if ls then
-                ls.C0 = CFrame.new(-1, 0.5, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
-            end
-            -- Beine gestreckt nach hinten
-            if rh then
-                rh.C0 = CFrame.new(1, -1, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
-            end
-            if lh then
-                lh.C0 = CFrame.new(-1, -1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
-            end
-            -- Kopf leicht nach vorne
-            if neck then
-                neck.C0 = CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(20), 0, 0)
+            if torso then
+                -- R6 Superman Pose
+                local rs   = torso:FindFirstChild("Right Shoulder")
+                local ls   = torso:FindFirstChild("Left Shoulder")
+                local rh   = torso:FindFirstChild("Right Hip")
+                local lh   = torso:FindFirstChild("Left Hip")
+                local neck = torso:FindFirstChild("Neck")
+                if rs   then rs.C0   = CFrame.new(1,0.5,0) * CFrame.Angles(0, math.rad(90), math.rad(-90)) end
+                if ls   then ls.C0   = CFrame.new(-1,0.5,0) * CFrame.Angles(0, -math.rad(90), math.rad(90)) end
+                if rh   then rh.C0   = CFrame.new(1,-1,0) * CFrame.Angles(0, math.rad(90), math.rad(90)) end
+                if lh   then lh.C0   = CFrame.new(-1,-1,0) * CFrame.Angles(0, -math.rad(90), math.rad(-90)) end
+                if neck then neck.C0 = CFrame.new(0,1,0) * CFrame.Angles(math.rad(30), 0, 0) end
+
+            elseif uTorso then
+                -- R15 Superman Pose — Motor6D in UpperTorso/LowerTorso
+                local lt = c:FindFirstChild("LowerTorso")
+                local function getM6D(parent, name)
+                    if not parent then return nil end
+                    for _,v in ipairs(parent:GetDescendants()) do
+                        if v:IsA("Motor6D") and v.Name == name then return v end
+                    end
+                end
+                local rShoulder = getM6D(uTorso, "RightShoulder")
+                local lShoulder = getM6D(uTorso, "LeftShoulder")
+                local rHip      = getM6D(lt, "RightHip")
+                local lHip      = getM6D(lt, "LeftHip")
+                local neckM     = getM6D(uTorso, "Neck")
+                if rShoulder then rShoulder.C0 = CFrame.new(0,0,0) * CFrame.Angles(math.rad(-90), 0, 0) end
+                if lShoulder then lShoulder.C0 = CFrame.new(0,0,0) * CFrame.Angles(math.rad(50), 0, 0) end
+                if rHip      then rHip.C0      = CFrame.new(0,0,0) * CFrame.Angles(math.rad(15), 0, 0) end
+                if lHip      then lHip.C0      = CFrame.new(0,0,0) * CFrame.Angles(math.rad(15), 0, 0) end
+                if neckM     then neckM.C0     = CFrame.new(0,0,0) * CFrame.Angles(math.rad(25), 0, 0) end
             end
         end)
         flyConn=RunService.Heartbeat:Connect(function()
