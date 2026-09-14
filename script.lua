@@ -140,9 +140,10 @@ local KEY_FILE     = "SplashKey.txt"
 local function saveKey(k)  pcall(function() writefile(KEY_FILE, k) end) end
 local function loadKey()   local ok,v = pcall(function() return readfile(KEY_FILE) end) return ok and v or nil end
 
-local keyUnlocked = false
+local keyUnlocked = loadKey() == VALID_KEY
+local keyEvent = Instance.new("BindableEvent")
 
-if loadKey() ~= VALID_KEY then
+if not keyUnlocked then
     -- ── Baue eigenes Key-GUI ──────────────────────────────
     local sg = Instance.new("ScreenGui")
     sg.Name = "SplashKeyUI"; sg.ResetOnSpawn = false; sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -160,143 +161,171 @@ if loadKey() ~= VALID_KEY then
 
     -- Card
     local card = Instance.new("Frame")
-    card.Size = UDim2.fromOffset(460, 340)
-    card.Position = UDim2.fromScale(0.5, 0.5)
+    card.Size = UDim2.fromOffset(500, 360)
+    card.Position = UDim2.new(0.5, 0, 1.5, 0)
     card.AnchorPoint = Vector2.new(0.5, 0.5)
     card.BackgroundColor3 = Color3.fromRGB(6, 11, 30)
     card.BorderSizePixel = 0; card.ZIndex = 2; card.Parent = sg
-    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 16)
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 20)
     local cardStroke = Instance.new("UIStroke", card)
-    cardStroke.Color = Color3.fromRGB(35, 75, 190); cardStroke.Thickness = 1.5
+    cardStroke.Color = Color3.fromRGB(45, 95, 210); cardStroke.Thickness = 2
+    cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
     -- Gradient auf Card
     local grad = Instance.new("UIGradient", card)
     grad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(8, 16, 48)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 28)),
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(10, 20, 58)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(7,  13, 40)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(5,  9,  28)),
     })
-    grad.Rotation = 135
+    grad.Rotation = 145
 
     -- Glow hinter Card
     local glow = Instance.new("ImageLabel")
-    glow.Size = UDim2.fromOffset(520, 400)
-    glow.Position = UDim2.fromScale(0.5, 0.5); glow.AnchorPoint = Vector2.new(0.5,0.5)
+    glow.Size = UDim2.fromOffset(600, 480)
+    glow.Position = UDim2.fromScale(0.5, 0.5); glow.AnchorPoint = Vector2.new(0.5, 0.5)
     glow.BackgroundTransparency = 1
     glow.Image = "rbxassetid://5028857084"
-    glow.ImageColor3 = Color3.fromRGB(30, 80, 255); glow.ImageTransparency = 0.7
+    glow.ImageColor3 = Color3.fromRGB(20, 70, 255); glow.ImageTransparency = 0.65
     glow.ZIndex = 1; glow.Parent = sg
+
+    -- Top accent bar
+    local topBar = Instance.new("Frame", card)
+    topBar.Size = UDim2.new(1, 0, 0, 4)
+    topBar.Position = UDim2.fromOffset(0, 0)
+    topBar.BorderSizePixel = 0; topBar.BackgroundColor3 = Color3.fromRGB(45, 120, 255); topBar.ZIndex = 4
+    local topBarGrad = Instance.new("UIGradient", topBar)
+    topBarGrad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(20, 80, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 180, 255)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(20, 80, 255)),
+    })
+    local topBarCorner = Instance.new("UICorner", topBar)
+    topBarCorner.CornerRadius = UDim.new(0, 20)
 
     -- Logo / Titel
     local title = Instance.new("TextLabel", card)
-    title.Size = UDim2.new(1, 0, 0, 44)
-    title.Position = UDim2.fromOffset(0, 28)
+    title.Size = UDim2.new(1, 0, 0, 50)
+    title.Position = UDim2.fromOffset(0, 24)
     title.BackgroundTransparency = 1
     title.Text = "SPLASH SCRIPTS"
-    title.TextColor3 = Color3.fromRGB(240, 248, 255)
+    title.TextColor3 = Color3.fromRGB(245, 250, 255)
     title.Font = Enum.Font.GothamBold
-    title.TextSize = 22; title.ZIndex = 3
+    title.TextSize = 26; title.ZIndex = 3
 
     -- Subtitle
     local sub = Instance.new("TextLabel", card)
-    sub.Size = UDim2.new(1, 0, 0, 22)
-    sub.Position = UDim2.fromOffset(0, 68)
+    sub.Size = UDim2.new(1, 0, 0, 20)
+    sub.Position = UDim2.fromOffset(0, 72)
     sub.BackgroundTransparency = 1
-    sub.Text = "Key System  ·  German Voice Edition"
-    sub.TextColor3 = Color3.fromRGB(100, 140, 220)
+    sub.Text = "German Voice Edition  ·  Key System"
+    sub.TextColor3 = Color3.fromRGB(90, 130, 215)
     sub.Font = Enum.Font.Gotham; sub.TextSize = 13; sub.ZIndex = 3
 
     -- Divider
     local div = Instance.new("Frame", card)
-    div.Size = UDim2.new(0.85, 0, 0, 1); div.Position = UDim2.new(0.075, 0, 0, 100)
+    div.Size = UDim2.new(0.88, 0, 0, 1); div.Position = UDim2.new(0.06, 0, 0, 104)
     div.BackgroundColor3 = Color3.fromRGB(30, 60, 150); div.BorderSizePixel = 0; div.ZIndex = 3
+    Instance.new("UIGradient", div).Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(5, 10, 40)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(50, 100, 220)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(5, 10, 40)),
+    })
 
     -- Discord Label
     local discLabel = Instance.new("TextLabel", card)
-    discLabel.Size = UDim2.new(1, -40, 0, 18)
-    discLabel.Position = UDim2.fromOffset(20, 116)
+    discLabel.Size = UDim2.new(1, -40, 0, 20)
+    discLabel.Position = UDim2.fromOffset(30, 118)
     discLabel.BackgroundTransparency = 1
-    discLabel.Text = "Trete dem Discord bei, um deinen Key zu erhalten:"
-    discLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
-    discLabel.Font = Enum.Font.Gotham; discLabel.TextSize = 12
+    discLabel.Text = "Key holen  →  Trete unserem Discord bei:"
+    discLabel.TextColor3 = Color3.fromRGB(140, 175, 240)
+    discLabel.Font = Enum.Font.GothamBold; discLabel.TextSize = 13
     discLabel.TextXAlignment = Enum.TextXAlignment.Left; discLabel.ZIndex = 3
 
     -- Discord Box
     local discBox = Instance.new("Frame", card)
-    discBox.Size = UDim2.new(0.86, 0, 0, 36)
-    discBox.Position = UDim2.new(0.07, 0, 0, 140)
-    discBox.BackgroundColor3 = Color3.fromRGB(10, 20, 55)
+    discBox.Size = UDim2.new(0.88, 0, 0, 42)
+    discBox.Position = UDim2.new(0.06, 0, 0, 144)
+    discBox.BackgroundColor3 = Color3.fromRGB(8, 16, 50)
     discBox.BorderSizePixel = 0; discBox.ZIndex = 3
-    Instance.new("UICorner", discBox).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", discBox).CornerRadius = UDim.new(0, 10)
     local discBoxStroke = Instance.new("UIStroke", discBox)
-    discBoxStroke.Color = Color3.fromRGB(35, 75, 190); discBoxStroke.Thickness = 1
+    discBoxStroke.Color = Color3.fromRGB(35, 75, 190); discBoxStroke.Thickness = 1.2
 
     local discText = Instance.new("TextLabel", discBox)
-    discText.Size = UDim2.new(1, -100, 1, 0)
-    discText.Position = UDim2.fromOffset(12, 0)
+    discText.Size = UDim2.new(1, -110, 1, 0)
+    discText.Position = UDim2.fromOffset(14, 0)
     discText.BackgroundTransparency = 1
     discText.Text = DISCORD_LINK
-    discText.TextColor3 = Color3.fromRGB(100, 160, 255)
-    discText.Font = Enum.Font.Gotham; discText.TextSize = 12
+    discText.TextColor3 = Color3.fromRGB(90, 155, 255)
+    discText.Font = Enum.Font.Gotham; discText.TextSize = 13
     discText.TextXAlignment = Enum.TextXAlignment.Left; discText.ZIndex = 4
 
     -- Copy Discord Button
     local copyBtn = Instance.new("TextButton", discBox)
-    copyBtn.Size = UDim2.fromOffset(80, 26)
-    copyBtn.Position = UDim2.new(1, -88, 0.5, -13)
-    copyBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
-    copyBtn.Text = "Kopieren"; copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    copyBtn.Font = Enum.Font.GothamBold; copyBtn.TextSize = 11
+    copyBtn.Size = UDim2.fromOffset(88, 30)
+    copyBtn.Position = UDim2.new(1, -96, 0.5, -15)
+    copyBtn.BackgroundColor3 = Color3.fromRGB(35, 90, 210)
+    copyBtn.Text = "Kopieren"; copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    copyBtn.Font = Enum.Font.GothamBold; copyBtn.TextSize = 12
     copyBtn.BorderSizePixel = 0; copyBtn.ZIndex = 5
-    Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIGradient", copyBtn).Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 120, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 65, 190)),
+    })
     copyBtn.MouseButton1Click:Connect(function()
         pcall(function() setclipboard(DISCORD_LINK) end)
-        copyBtn.Text = "Kopiert!"
+        copyBtn.Text = "✓ Kopiert"
         copyBtn.BackgroundColor3 = Color3.fromRGB(20, 160, 80)
-        task.delay(2, function()
+        task.delay(2.5, function()
             copyBtn.Text = "Kopieren"
-            copyBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
+            copyBtn.BackgroundColor3 = Color3.fromRGB(35, 90, 210)
         end)
     end)
 
     -- Key Input Label
     local keyLabel = Instance.new("TextLabel", card)
-    keyLabel.Size = UDim2.new(1, -40, 0, 18)
-    keyLabel.Position = UDim2.fromOffset(20, 192)
+    keyLabel.Size = UDim2.new(1, -40, 0, 20)
+    keyLabel.Position = UDim2.fromOffset(30, 202)
     keyLabel.BackgroundTransparency = 1
     keyLabel.Text = "Key eingeben:"
-    keyLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
-    keyLabel.Font = Enum.Font.Gotham; keyLabel.TextSize = 12
+    keyLabel.TextColor3 = Color3.fromRGB(140, 175, 240)
+    keyLabel.Font = Enum.Font.GothamBold; keyLabel.TextSize = 13
     keyLabel.TextXAlignment = Enum.TextXAlignment.Left; keyLabel.ZIndex = 3
 
     -- Key Input Box
     local inputBox = Instance.new("Frame", card)
-    inputBox.Size = UDim2.new(0.86, 0, 0, 38)
-    inputBox.Position = UDim2.new(0.07, 0, 0, 216)
-    inputBox.BackgroundColor3 = Color3.fromRGB(10, 20, 55)
+    inputBox.Size = UDim2.new(0.88, 0, 0, 44)
+    inputBox.Position = UDim2.new(0.06, 0, 0, 228)
+    inputBox.BackgroundColor3 = Color3.fromRGB(8, 16, 50)
     inputBox.BorderSizePixel = 0; inputBox.ZIndex = 3
-    Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 10)
     local inputStroke = Instance.new("UIStroke", inputBox)
-    inputStroke.Color = Color3.fromRGB(35, 75, 190); inputStroke.Thickness = 1
+    inputStroke.Color = Color3.fromRGB(35, 75, 190); inputStroke.Thickness = 1.2
 
     local keyInput = Instance.new("TextBox", inputBox)
-    keyInput.Size = UDim2.new(1, -16, 1, 0)
-    keyInput.Position = UDim2.fromOffset(12, 0)
+    keyInput.Size = UDim2.new(1, -20, 1, 0)
+    keyInput.Position = UDim2.fromOffset(14, 0)
     keyInput.BackgroundTransparency = 1
     keyInput.PlaceholderText = "Key hier eingeben..."
-    keyInput.PlaceholderColor3 = Color3.fromRGB(70, 100, 160)
-    keyInput.Text = ""; keyInput.TextColor3 = Color3.fromRGB(210, 230, 255)
-    keyInput.Font = Enum.Font.Gotham; keyInput.TextSize = 13
+    keyInput.PlaceholderColor3 = Color3.fromRGB(60, 90, 150)
+    keyInput.Text = ""; keyInput.TextColor3 = Color3.fromRGB(215, 235, 255)
+    keyInput.Font = Enum.Font.Gotham; keyInput.TextSize = 14
     keyInput.TextXAlignment = Enum.TextXAlignment.Left
     keyInput.ClearTextOnFocus = false; keyInput.ZIndex = 4
 
-    -- Focus glow
-    keyInput.Focused:Connect(function() inputStroke.Color = Color3.fromRGB(60,130,255) end)
-    keyInput.FocusLost:Connect(function() inputStroke.Color = Color3.fromRGB(35,75,190) end)
+    keyInput.Focused:Connect(function()
+        TweenService:Create(inputStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(60, 140, 255), Thickness = 2 }):Play()
+    end)
+    keyInput.FocusLost:Connect(function()
+        TweenService:Create(inputStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(35, 75, 190), Thickness = 1.2 }):Play()
+    end)
 
     -- Status Label
     local statusLabel = Instance.new("TextLabel", card)
-    statusLabel.Size = UDim2.new(1, -40, 0, 18)
-    statusLabel.Position = UDim2.fromOffset(20, 262)
+    statusLabel.Size = UDim2.new(1, 0, 0, 20)
+    statusLabel.Position = UDim2.fromOffset(0, 280)
     statusLabel.BackgroundTransparency = 1
     statusLabel.Text = ""; statusLabel.Font = Enum.Font.Gotham; statusLabel.TextSize = 12
     statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80); statusLabel.ZIndex = 3
@@ -304,31 +333,27 @@ if loadKey() ~= VALID_KEY then
 
     -- Confirm Button
     local confirmBtn = Instance.new("TextButton", card)
-    confirmBtn.Size = UDim2.new(0.86, 0, 0, 40)
-    confirmBtn.Position = UDim2.new(0.07, 0, 0, 284)
-    confirmBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 220)
-    confirmBtn.Text = "Bestätigen"; confirmBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    confirmBtn.Font = Enum.Font.GothamBold; confirmBtn.TextSize = 14
+    confirmBtn.Size = UDim2.new(0.88, 0, 0, 46)
+    confirmBtn.Position = UDim2.new(0.06, 0, 0, 302)
+    confirmBtn.BackgroundColor3 = Color3.fromRGB(35, 100, 235)
+    confirmBtn.Text = "Bestätigen"; confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    confirmBtn.Font = Enum.Font.GothamBold; confirmBtn.TextSize = 15
     confirmBtn.BorderSizePixel = 0; confirmBtn.ZIndex = 3
-    Instance.new("UICorner", confirmBtn).CornerRadius = UDim.new(0, 10)
-    local confirmGrad = Instance.new("UIGradient", confirmBtn)
-    confirmGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 110, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 60, 180)),
+    Instance.new("UICorner", confirmBtn).CornerRadius = UDim.new(0, 12)
+    Instance.new("UIGradient", confirmBtn).Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 130, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 65, 200)),
     })
-    confirmGrad.Rotation = 90
 
-    -- Hover Effekt
     confirmBtn.MouseEnter:Connect(function()
-        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(50, 130, 255) }):Play()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(60, 140, 255) }):Play()
     end)
     confirmBtn.MouseLeave:Connect(function()
-        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(30, 90, 220) }):Play()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(35, 100, 235) }):Play()
     end)
 
     -- Slide-in Animation
-    card.Position = UDim2.new(0.5, 0, 1.2, 0)
-    TweenService:Create(card, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    TweenService:Create(card, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
         Position = UDim2.fromScale(0.5, 0.5)
     }):Play()
 
@@ -345,9 +370,9 @@ if loadKey() ~= VALID_KEY then
                 TweenService:Create(card, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
                     Position = UDim2.new(0.5, 0, -0.8, 0)
                 }):Play()
-                task.wait(0.45)
+                task.wait(0.5)
                 blur:Destroy(); sg:Destroy()
-                keyUnlocked = true
+                keyEvent:Fire()
             end)
         else
             statusLabel.Text = "Falscher Key! Discord: " .. DISCORD_LINK
@@ -364,7 +389,8 @@ if loadKey() ~= VALID_KEY then
         if enter then confirmBtn.MouseButton1Click:Fire() end
     end)
 
-    repeat task.wait(0.1) until keyUnlocked
+    keyEvent.Event:Wait()
+    keyEvent:Destroy()
 end
 
 -- ════════════════════════════════════════════════════════════
