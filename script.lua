@@ -1,4 +1,4 @@
--- ╔══════════════════════════════════════════════════════════╗
+ly() r-- ╔══════════════════════════════════════════════════════════╗
 -- ║          S P L A S H   S C R I P T S                    ║
 -- ║          German Voice Edition  |  v4.0                  ║
 -- ╚══════════════════════════════════════════════════════════╝
@@ -140,70 +140,86 @@ local KEY_FILE     = "SplashKey.txt"
 local function saveKey(k)  pcall(function() writefile(KEY_FILE, k) end) end
 local function loadKey()   local ok,v = pcall(function() return readfile(KEY_FILE) end) return ok and v or nil end
 
-local keyUnlocked = loadKey() == VALID_KEY
-local keyEvent = Instance.new("BindableEvent")
+local VALID_KEY    = "SplashScripts2026!"
+local DISCORD_LINK = "https://discord.gg/eyzfsAjpSr"
+local KEY_FILE     = "SplashKey.txt"
 
-if not keyUnlocked then
-    -- ── Baue eigenes Key-GUI ──────────────────────────────
+local function saveKey(k)
+    pcall(function() writefile(KEY_FILE, k) end)
+end
+
+local function loadKey()
+    local ok, v = pcall(function() return readfile(KEY_FILE) end)
+    if ok and type(v) == "string" then return v end
+    return nil
+end
+
+-- Wenn Key schon gespeichert ist, direkt weiter
+local keyValid = loadKey() == VALID_KEY
+
+if not keyValid then
+    local keyDone = false
+
     local sg = Instance.new("ScreenGui")
-    sg.Name = "SplashKeyUI"; sg.ResetOnSpawn = false; sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    sg.Name = "SplashKeyUI"
+    sg.ResetOnSpawn = false
+    sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     sg.IgnoreGuiInset = true
-    sg.Parent = LP:WaitForChild("PlayerGui")
+    pcall(function() sg.Parent = LP:WaitForChild("PlayerGui") end)
 
-    -- Blur
     local blur = Instance.new("BlurEffect")
-    blur.Size = 20; blur.Parent = game:GetService("Lighting")
+    blur.Size = 20
+    pcall(function() blur.Parent = Lighting end)
 
-    -- Dimmer
-    local dim = Instance.new("Frame")
-    dim.Size = UDim2.fromScale(1,1); dim.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    dim.BackgroundTransparency = 0.35; dim.BorderSizePixel = 0; dim.ZIndex = 1; dim.Parent = sg
+    local dim = Instance.new("Frame", sg)
+    dim.Size = UDim2.fromScale(1, 1)
+    dim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    dim.BackgroundTransparency = 0.4
+    dim.BorderSizePixel = 0
+    dim.ZIndex = 1
 
-    -- Card
-    local card = Instance.new("Frame")
+    local card = Instance.new("Frame", sg)
     card.Size = UDim2.fromOffset(500, 360)
     card.Position = UDim2.new(0.5, 0, 1.5, 0)
     card.AnchorPoint = Vector2.new(0.5, 0.5)
     card.BackgroundColor3 = Color3.fromRGB(6, 11, 30)
-    card.BorderSizePixel = 0; card.ZIndex = 2; card.Parent = sg
+    card.BorderSizePixel = 0
+    card.ZIndex = 2
     Instance.new("UICorner", card).CornerRadius = UDim.new(0, 20)
-    local cardStroke = Instance.new("UIStroke", card)
-    cardStroke.Color = Color3.fromRGB(45, 95, 210); cardStroke.Thickness = 2
-    cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-    -- Gradient auf Card
-    local grad = Instance.new("UIGradient", card)
-    grad.Color = ColorSequence.new({
+    local cs = Instance.new("UIStroke", card)
+    cs.Color = Color3.fromRGB(45, 95, 210); cs.Thickness = 2
+    local cg = Instance.new("UIGradient", card)
+    cg.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0,   Color3.fromRGB(10, 20, 58)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(7,  13, 40)),
         ColorSequenceKeypoint.new(1,   Color3.fromRGB(5,  9,  28)),
     })
-    grad.Rotation = 145
+    cg.Rotation = 145
 
-    -- Glow hinter Card
-    local glow = Instance.new("ImageLabel")
+    -- Glow
+    local glow = Instance.new("ImageLabel", sg)
     glow.Size = UDim2.fromOffset(600, 480)
-    glow.Position = UDim2.fromScale(0.5, 0.5); glow.AnchorPoint = Vector2.new(0.5, 0.5)
+    glow.Position = UDim2.fromScale(0.5, 0.5)
+    glow.AnchorPoint = Vector2.new(0.5, 0.5)
     glow.BackgroundTransparency = 1
     glow.Image = "rbxassetid://5028857084"
-    glow.ImageColor3 = Color3.fromRGB(20, 70, 255); glow.ImageTransparency = 0.65
-    glow.ZIndex = 1; glow.Parent = sg
+    glow.ImageColor3 = Color3.fromRGB(20, 70, 255)
+    glow.ImageTransparency = 0.65
+    glow.ZIndex = 1
 
     -- Top accent bar
     local topBar = Instance.new("Frame", card)
     topBar.Size = UDim2.new(1, 0, 0, 4)
-    topBar.Position = UDim2.fromOffset(0, 0)
-    topBar.BorderSizePixel = 0; topBar.BackgroundColor3 = Color3.fromRGB(45, 120, 255); topBar.ZIndex = 4
-    local topBarGrad = Instance.new("UIGradient", topBar)
-    topBarGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0,   Color3.fromRGB(20, 80, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 180, 255)),
-        ColorSequenceKeypoint.new(1,   Color3.fromRGB(20, 80, 255)),
+    topBar.BackgroundColor3 = Color3.fromRGB(45, 120, 255)
+    topBar.BorderSizePixel = 0; topBar.ZIndex = 4
+    Instance.new("UICorner", topBar).CornerRadius = UDim.new(0, 20)
+    Instance.new("UIGradient", topBar).Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(20,  80, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100,180, 255)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(20,  80, 255)),
     })
-    local topBarCorner = Instance.new("UICorner", topBar)
-    topBarCorner.CornerRadius = UDim.new(0, 20)
 
-    -- Logo / Titel
+    -- Titel
     local title = Instance.new("TextLabel", card)
     title.Size = UDim2.new(1, 0, 0, 50)
     title.Position = UDim2.fromOffset(0, 24)
@@ -213,7 +229,6 @@ if not keyUnlocked then
     title.Font = Enum.Font.GothamBold
     title.TextSize = 26; title.ZIndex = 3
 
-    -- Subtitle
     local sub = Instance.new("TextLabel", card)
     sub.Size = UDim2.new(1, 0, 0, 20)
     sub.Position = UDim2.fromOffset(0, 72)
@@ -224,12 +239,14 @@ if not keyUnlocked then
 
     -- Divider
     local div = Instance.new("Frame", card)
-    div.Size = UDim2.new(0.88, 0, 0, 1); div.Position = UDim2.new(0.06, 0, 0, 104)
-    div.BackgroundColor3 = Color3.fromRGB(30, 60, 150); div.BorderSizePixel = 0; div.ZIndex = 3
+    div.Size = UDim2.new(0.88, 0, 0, 1)
+    div.Position = UDim2.new(0.06, 0, 0, 104)
+    div.BackgroundColor3 = Color3.fromRGB(30, 60, 150)
+    div.BorderSizePixel = 0; div.ZIndex = 3
     Instance.new("UIGradient", div).Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0,   Color3.fromRGB(5, 10, 40)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(50, 100, 220)),
-        ColorSequenceKeypoint.new(1,   Color3.fromRGB(5, 10, 40)),
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(5,  10, 40)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(50,100,220)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(5,  10, 40)),
     })
 
     -- Discord Label
@@ -249,8 +266,8 @@ if not keyUnlocked then
     discBox.BackgroundColor3 = Color3.fromRGB(8, 16, 50)
     discBox.BorderSizePixel = 0; discBox.ZIndex = 3
     Instance.new("UICorner", discBox).CornerRadius = UDim.new(0, 10)
-    local discBoxStroke = Instance.new("UIStroke", discBox)
-    discBoxStroke.Color = Color3.fromRGB(35, 75, 190); discBoxStroke.Thickness = 1.2
+    local dbs = Instance.new("UIStroke", discBox)
+    dbs.Color = Color3.fromRGB(35, 75, 190); dbs.Thickness = 1.2
 
     local discText = Instance.new("TextLabel", discBox)
     discText.Size = UDim2.new(1, -110, 1, 0)
@@ -261,19 +278,14 @@ if not keyUnlocked then
     discText.Font = Enum.Font.Gotham; discText.TextSize = 13
     discText.TextXAlignment = Enum.TextXAlignment.Left; discText.ZIndex = 4
 
-    -- Copy Discord Button
     local copyBtn = Instance.new("TextButton", discBox)
     copyBtn.Size = UDim2.fromOffset(88, 30)
     copyBtn.Position = UDim2.new(1, -96, 0.5, -15)
     copyBtn.BackgroundColor3 = Color3.fromRGB(35, 90, 210)
-    copyBtn.Text = "Kopieren"; copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    copyBtn.Text = "Kopieren"; copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
     copyBtn.Font = Enum.Font.GothamBold; copyBtn.TextSize = 12
     copyBtn.BorderSizePixel = 0; copyBtn.ZIndex = 5
     Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 8)
-    Instance.new("UIGradient", copyBtn).Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 120, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 65, 190)),
-    })
     copyBtn.MouseButton1Click:Connect(function()
         pcall(function() setclipboard(DISCORD_LINK) end)
         copyBtn.Text = "✓ Kopiert"
@@ -284,7 +296,7 @@ if not keyUnlocked then
         end)
     end)
 
-    -- Key Input Label
+    -- Key Label
     local keyLabel = Instance.new("TextLabel", card)
     keyLabel.Size = UDim2.new(1, -40, 0, 20)
     keyLabel.Position = UDim2.fromOffset(30, 202)
@@ -294,15 +306,15 @@ if not keyUnlocked then
     keyLabel.Font = Enum.Font.GothamBold; keyLabel.TextSize = 13
     keyLabel.TextXAlignment = Enum.TextXAlignment.Left; keyLabel.ZIndex = 3
 
-    -- Key Input Box
+    -- Key Input
     local inputBox = Instance.new("Frame", card)
     inputBox.Size = UDim2.new(0.88, 0, 0, 44)
     inputBox.Position = UDim2.new(0.06, 0, 0, 228)
     inputBox.BackgroundColor3 = Color3.fromRGB(8, 16, 50)
     inputBox.BorderSizePixel = 0; inputBox.ZIndex = 3
     Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 10)
-    local inputStroke = Instance.new("UIStroke", inputBox)
-    inputStroke.Color = Color3.fromRGB(35, 75, 190); inputStroke.Thickness = 1.2
+    local iStroke = Instance.new("UIStroke", inputBox)
+    iStroke.Color = Color3.fromRGB(35, 75, 190); iStroke.Thickness = 1.2
 
     local keyInput = Instance.new("TextBox", inputBox)
     keyInput.Size = UDim2.new(1, -20, 1, 0)
@@ -310,19 +322,20 @@ if not keyUnlocked then
     keyInput.BackgroundTransparency = 1
     keyInput.PlaceholderText = "Key hier eingeben..."
     keyInput.PlaceholderColor3 = Color3.fromRGB(60, 90, 150)
-    keyInput.Text = ""; keyInput.TextColor3 = Color3.fromRGB(215, 235, 255)
+    keyInput.Text = ""
+    keyInput.TextColor3 = Color3.fromRGB(215, 235, 255)
     keyInput.Font = Enum.Font.Gotham; keyInput.TextSize = 14
     keyInput.TextXAlignment = Enum.TextXAlignment.Left
     keyInput.ClearTextOnFocus = false; keyInput.ZIndex = 4
 
     keyInput.Focused:Connect(function()
-        TweenService:Create(inputStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(60, 140, 255), Thickness = 2 }):Play()
+        TweenService:Create(iStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(60,140,255), Thickness = 2 }):Play()
     end)
     keyInput.FocusLost:Connect(function()
-        TweenService:Create(inputStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(35, 75, 190), Thickness = 1.2 }):Play()
+        TweenService:Create(iStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(35,75,190), Thickness = 1.2 }):Play()
     end)
 
-    -- Status Label
+    -- Status
     local statusLabel = Instance.new("TextLabel", card)
     statusLabel.Size = UDim2.new(1, 0, 0, 20)
     statusLabel.Position = UDim2.fromOffset(0, 280)
@@ -336,29 +349,29 @@ if not keyUnlocked then
     confirmBtn.Size = UDim2.new(0.88, 0, 0, 46)
     confirmBtn.Position = UDim2.new(0.06, 0, 0, 302)
     confirmBtn.BackgroundColor3 = Color3.fromRGB(35, 100, 235)
-    confirmBtn.Text = "Bestätigen"; confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    confirmBtn.Text = "Bestätigen"
+    confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     confirmBtn.Font = Enum.Font.GothamBold; confirmBtn.TextSize = 15
     confirmBtn.BorderSizePixel = 0; confirmBtn.ZIndex = 3
     Instance.new("UICorner", confirmBtn).CornerRadius = UDim.new(0, 12)
     Instance.new("UIGradient", confirmBtn).Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 130, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 65, 200)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(55,130,255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 65,200)),
     })
-
     confirmBtn.MouseEnter:Connect(function()
-        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(60, 140, 255) }):Play()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(60,140,255) }):Play()
     end)
     confirmBtn.MouseLeave:Connect(function()
-        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(35, 100, 235) }):Play()
+        TweenService:Create(confirmBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(35,100,235) }):Play()
     end)
 
-    -- Slide-in Animation
+    -- Slide-in
     TweenService:Create(card, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
         Position = UDim2.fromScale(0.5, 0.5)
     }):Play()
 
-    -- Key bestätigen
-    confirmBtn.MouseButton1Click:Connect(function()
+    -- Confirm Logic
+    local function tryKey()
         local entered = keyInput.Text
         if entered == VALID_KEY then
             saveKey(entered)
@@ -371,27 +384,27 @@ if not keyUnlocked then
                     Position = UDim2.new(0.5, 0, -0.8, 0)
                 }):Play()
                 task.wait(0.5)
-                blur:Destroy(); sg:Destroy()
-                keyEvent:Fire()
+                pcall(function() blur:Destroy() end)
+                sg:Destroy()
+                keyDone = true
             end)
         else
-            statusLabel.Text = "Falscher Key! Discord: " .. DISCORD_LINK
-            statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-            TweenService:Create(inputStroke, TweenInfo.new(0.1), { Color = Color3.fromRGB(255, 60, 60) }):Play()
+            statusLabel.Text = "Falscher Key!  Discord: discord.gg/eyzfsAjpSr"
+            TweenService:Create(iStroke, TweenInfo.new(0.1), { Color = Color3.fromRGB(255,60,60) }):Play()
             task.delay(1.5, function()
-                TweenService:Create(inputStroke, TweenInfo.new(0.3), { Color = Color3.fromRGB(35, 75, 190) }):Play()
+                TweenService:Create(iStroke, TweenInfo.new(0.3), { Color = Color3.fromRGB(35,75,190) }):Play()
             end)
         end
-    end)
+    end
 
-    -- Enter = bestätigen
-    keyInput.FocusLost:Connect(function(enter)
-        if enter then confirmBtn.MouseButton1Click:Fire() end
-    end)
+    confirmBtn.MouseButton1Click:Connect(tryKey)
+    keyInput.FocusLost:Connect(function(enter) if enter then tryKey() end end)
 
-    keyEvent.Event:Wait()
-    keyEvent:Destroy()
+    -- Warten bis Key korrekt
+    while not keyDone do task.wait(0.05) end
 end
+
+
 
 -- ════════════════════════════════════════════════════════════
 --  HAUPT-FENSTER
@@ -442,7 +455,7 @@ local function startFly()
 
     flyConn = RunService.Heartbeat:Connect(function()
         if not flyActive then cleanFly() return end
-        local h2 = getHRP(); if not h2 then cleanFly() return end
+        local h2 = getHRP(); if not h2 then cleanFeturn end
         local dir = Vector3.zero; local cf = Camera.CFrame
         if UserInputService:IsKeyDown(Enum.KeyCode.W)         then dir += cf.LookVector          end
         if UserInputService:IsKeyDown(Enum.KeyCode.S)         then dir -= cf.LookVector          end
