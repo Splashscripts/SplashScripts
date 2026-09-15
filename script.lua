@@ -28,23 +28,23 @@ end
 -- FARBEN & STYLE
 -- ════════════════════════════════════════
 local C = {
-    bg        = Color3.fromRGB(5, 8, 22),
-    sidebar   = Color3.fromRGB(7, 12, 32),
-    card      = Color3.fromRGB(10, 17, 45),
-    cardHover = Color3.fromRGB(14, 24, 62),
-    accent    = Color3.fromRGB(45, 120, 255),
-    accentDim = Color3.fromRGB(25, 70, 180),
-    accentGlow= Color3.fromRGB(80, 160, 255),
-    text      = Color3.fromRGB(220, 235, 255),
-    textDim   = Color3.fromRGB(120, 155, 210),
-    textMuted = Color3.fromRGB(70, 100, 165),
-    success   = Color3.fromRGB(40, 200, 100),
-    error     = Color3.fromRGB(255, 70, 70),
-    stroke    = Color3.fromRGB(28, 55, 140),
-    strokeHov = Color3.fromRGB(55, 120, 255),
-    toggle_on = Color3.fromRGB(45, 120, 255),
-    toggle_off= Color3.fromRGB(20, 35, 80),
-    slider_bg = Color3.fromRGB(8, 14, 40),
+    bg        = Color3.fromRGB(140, 175, 235),  -- helles Baby-Blau
+    sidebar   = Color3.fromRGB(110, 150, 220),  -- etwas dunkleres Blau
+    card      = Color3.fromRGB(155, 190, 245),  -- helle Karte
+    cardHover = Color3.fromRGB(170, 205, 255),  -- hover noch heller
+    accent    = Color3.fromRGB(60, 120, 230),   -- kräftiges Blau
+    accentDim = Color3.fromRGB(80, 140, 220),
+    accentGlow= Color3.fromRGB(100, 170, 255),
+    text      = Color3.fromRGB(20, 40, 100),    -- dunkles Blau für Text
+    textDim   = Color3.fromRGB(50, 80, 160),
+    textMuted = Color3.fromRGB(80, 110, 190),
+    success   = Color3.fromRGB(40, 180, 100),
+    error     = Color3.fromRGB(220, 60, 60),
+    stroke    = Color3.fromRGB(120, 160, 230),  -- heller Rand
+    strokeHov = Color3.fromRGB(60, 120, 230),
+    toggle_on = Color3.fromRGB(60, 120, 230),
+    toggle_off= Color3.fromRGB(160, 195, 240),
+    slider_bg = Color3.fromRGB(120, 165, 235),
     black     = Color3.fromRGB(0, 0, 0),
 }
 
@@ -285,38 +285,35 @@ local function loadMain()
     glowBg.Position=UDim2.fromScale(0.5,0.5)
     glowBg.BackgroundTransparency=1
     glowBg.Image="rbxassetid://5028857084"
-    glowBg.ImageColor3=Color3.fromRGB(20,60,200); glowBg.ImageTransparency=0.72; glowBg.ZIndex=0
+    glowBg.ImageColor3=Color3.fromRGB(100,150,240); glowBg.ImageTransparency=0.85; glowBg.ZIndex=0
 
     local main = Instance.new("Frame", sg)
     main.Size = UDim2.fromOffset(WIN_W, WIN_H)
     main.AnchorPoint = Vector2.new(0.5,0.5)
     main.Position = UDim2.fromScale(0.5,0.5)
-    main.BackgroundColor3 = C.bg
+    main.BackgroundColor3 = Color3.fromRGB(130, 170, 235)
     main.BorderSizePixel=0
     mkCorner(main,12)
-    mkStroke(main, Color3.fromRGB(50,120,255), 1.5)
-    mkGrad(main, Color3.fromRGB(8,14,40), Color3.fromRGB(4,7,18), 135)
+    -- Kein leuchtender Rand mehr
+    mkGrad(main, Color3.fromRGB(155, 195, 250), Color3.fromRGB(110, 150, 220), 135)
 
     -- ── Top bar ───────────────────────────────────────────────────
     local topBar = Instance.new("Frame", main)
     topBar.Size=UDim2.new(1,0,0,TOPBAR_H)
-    topBar.BackgroundColor3=Color3.fromRGB(8,15,48)
+    topBar.BackgroundColor3=Color3.fromRGB(100, 140, 215)
     topBar.BorderSizePixel=0; topBar.ZIndex=3
-    -- Visible gradient from lighter top to darker bottom
-    mkGrad(topBar, Color3.fromRGB(12,22,62), Color3.fromRGB(5,9,28), 90)
-    -- Rounded top corners only — use same corner as main window
+    mkGrad(topBar, Color3.fromRGB(120, 160, 230), Color3.fromRGB(90, 130, 210), 90)
     mkCorner(topBar, 12)
-    -- Thin bottom separator with glow
     local topLine = Instance.new("Frame", main)
     topLine.Size=UDim2.new(1,0,0,1); topLine.Position=UDim2.fromOffset(0,TOPBAR_H)
-    topLine.BackgroundColor3=C.accent; topLine.BorderSizePixel=0; topLine.ZIndex=4
-    mkGrad(topLine, Color3.fromRGB(20,60,220), C.accentGlow, 0)
+    topLine.BackgroundColor3=Color3.fromRGB(160,200,255); topLine.BorderSizePixel=0; topLine.ZIndex=4
+    mkGrad(topLine, Color3.fromRGB(100,150,240), Color3.fromRGB(180,215,255), 0)
 
     -- Logo
     local logoLbl = Instance.new("TextLabel", topBar)
     logoLbl.Size=UDim2.new(0,200,1,0); logoLbl.Position=UDim2.fromOffset(14,0)
     logoLbl.BackgroundTransparency=1; logoLbl.Text="SPLASH SCRIPTS"
-    logoLbl.TextColor3=Color3.fromRGB(235,245,255)
+    logoLbl.TextColor3=Color3.fromRGB(15, 35, 100)
     logoLbl.Font=Enum.Font.GothamBlack; logoLbl.TextSize=15
     logoLbl.TextXAlignment=Enum.TextXAlignment.Left; logoLbl.ZIndex=4
 
@@ -330,8 +327,8 @@ local function loadMain()
     local minimizeBtn=Instance.new("TextButton",topBar)
     minimizeBtn.Size=UDim2.fromOffset(26,26)
     minimizeBtn.Position=UDim2.new(1,-36,0.5,-13)
-    minimizeBtn.BackgroundColor3=Color3.fromRGB(12,22,58)
-    minimizeBtn.Text="—"; minimizeBtn.TextColor3=C.textDim
+    minimizeBtn.BackgroundColor3=Color3.fromRGB(90,130,210)
+    minimizeBtn.Text="—"; minimizeBtn.TextColor3=Color3.fromRGB(20,50,130)
     minimizeBtn.Font=Enum.Font.GothamBlack; minimizeBtn.TextSize=14
     minimizeBtn.BorderSizePixel=0; minimizeBtn.ZIndex=5
     mkCorner(minimizeBtn,6)
@@ -409,21 +406,20 @@ local function loadMain()
     -- ── Sidebar ───────────────────────────────────────────────────
     local sidebar=Instance.new("Frame",contentArea)
     sidebar.Size=UDim2.new(0,SIDEBAR_W,1,0)
-    sidebar.BackgroundColor3=Color3.fromRGB(5,9,26)
+    sidebar.BackgroundColor3=Color3.fromRGB(100,140,215)
     sidebar.BorderSizePixel=0; sidebar.ZIndex=3
-    -- Strong dark gradient for premium look
-    mkGrad(sidebar, Color3.fromRGB(6,11,30), Color3.fromRGB(3,6,18), 90)
+    mkGrad(sidebar, Color3.fromRGB(120,160,235), Color3.fromRGB(90,125,205), 90)
 
     -- Right border separator
     local sideStroke=Instance.new("Frame",sidebar)
     sideStroke.Size=UDim2.new(0,1,1,0); sideStroke.Position=UDim2.new(1,-1,0,0)
-    sideStroke.BackgroundColor3=Color3.fromRGB(30,60,140); sideStroke.BorderSizePixel=0; sideStroke.ZIndex=4
+    sideStroke.BackgroundColor3=Color3.fromRGB(140,175,230); sideStroke.BorderSizePixel=0; sideStroke.ZIndex=4
 
     -- Sidebar top accent bar
     local sideTopAccent=Instance.new("Frame",sidebar)
-    sideTopAccent.Size=UDim2.new(1,0,0,2); sideTopAccent.BackgroundColor3=C.accent
+    sideTopAccent.Size=UDim2.new(1,0,0,2); sideTopAccent.BackgroundColor3=Color3.fromRGB(80,130,220)
     sideTopAccent.BorderSizePixel=0; sideTopAccent.ZIndex=5
-    mkGrad(sideTopAccent, Color3.fromRGB(30,80,220), C.accentGlow, 0)
+    mkGrad(sideTopAccent, Color3.fromRGB(60,110,210), Color3.fromRGB(140,185,250), 0)
 
     -- ── Content panel ─────────────────────────────────────────────
     local panel=Instance.new("Frame",contentArea)
@@ -439,20 +435,20 @@ local function loadMain()
         -- Sidebar button
         local btn=Instance.new("TextButton",sidebar)
         btn.Size=UDim2.new(1,0,0,38)
-        btn.BackgroundColor3=Color3.fromRGB(5,9,26)
+        btn.BackgroundColor3=Color3.fromRGB(100,140,215)
         btn.Text=""; btn.BorderSizePixel=0; btn.ZIndex=4
 
         -- Active background glow (hidden by default)
         local activeGlow=Instance.new("Frame",btn)
-        activeGlow.Size=UDim2.fromScale(1,1); activeGlow.BackgroundColor3=Color3.fromRGB(15,35,90)
+        activeGlow.Size=UDim2.fromScale(1,1); activeGlow.BackgroundColor3=Color3.fromRGB(170,205,255)
         activeGlow.BorderSizePixel=0; activeGlow.ZIndex=4; activeGlow.BackgroundTransparency=1
-        mkGrad(activeGlow, Color3.fromRGB(20,50,120), Color3.fromRGB(5,9,26), 0)
+        mkGrad(activeGlow, Color3.fromRGB(160,200,255), Color3.fromRGB(120,160,235), 0)
 
         -- Left active indicator bar
         local activeBar=Instance.new("Frame",btn)
         activeBar.Size=UDim2.fromOffset(3,22)
         activeBar.Position=UDim2.new(0,0,0.5,-11)
-        activeBar.BackgroundColor3=Color3.fromRGB(60,140,255)
+        activeBar.BackgroundColor3=Color3.fromRGB(30,80,200)
         activeBar.BorderSizePixel=0; activeBar.ZIndex=6
         mkCorner(activeBar,2)
         activeBar.BackgroundTransparency=1
@@ -493,24 +489,24 @@ local function loadMain()
                 at.label.TextColor3=C.textMuted
                 tween(at.bar,{BackgroundTransparency=1})
                 tween(at.glow,{BackgroundTransparency=1})
-                tween(at.btn,{BackgroundColor3=Color3.fromRGB(5,9,26)})
+                tween(at.btn,{BackgroundColor3=Color3.fromRGB(100,140,215)})
             end
             activeTab=name
             content.Visible=true
-            tween(btnLabel,{TextColor3=Color3.fromRGB(210,230,255)})
+            tween(btnLabel,{TextColor3=Color3.fromRGB(15,40,110)})
             tween(activeBar,{BackgroundTransparency=0},0.15)
             tween(activeGlow,{BackgroundTransparency=0.45},0.15)
-            tween(btn,{BackgroundColor3=Color3.fromRGB(10,20,55)})
+            tween(btn,{BackgroundColor3=Color3.fromRGB(160,200,255)})
         end)
         btn.MouseEnter:Connect(function()
             if activeTab~=name then
-                tween(btn,{BackgroundColor3=Color3.fromRGB(8,15,38)})
+                tween(btn,{BackgroundColor3=Color3.fromRGB(130,170,240)})
                 tween(btnLabel,{TextColor3=C.textDim})
             end
         end)
         btn.MouseLeave:Connect(function()
             if activeTab~=name then
-                tween(btn,{BackgroundColor3=Color3.fromRGB(5,9,26)})
+                tween(btn,{BackgroundColor3=Color3.fromRGB(100,140,215)})
                 tween(btnLabel,{TextColor3=C.textMuted})
             end
         end)
@@ -520,14 +516,14 @@ local function loadMain()
 
     -- ── Element builders ──────────────────────────────────────────
     -- Card gradient colors (more visible depth)
-    local EL_C0 = Color3.fromRGB(10,18,52)
-    local EL_C1 = Color3.fromRGB(7,12,36)
+    local EL_C0 = Color3.fromRGB(145, 185, 245)
+    local EL_C1 = Color3.fromRGB(125, 165, 230)
 
     local function addSection(tab, text)
         local f=Instance.new("Frame",tab.content); f.Size=UDim2.new(1,0,0,22)
         f.BackgroundTransparency=1; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
         local l=Instance.new("TextLabel",f); l.Size=UDim2.fromScale(1,1); l.BackgroundTransparency=1
-        l.Text=string.upper(text); l.TextColor3=Color3.fromRGB(45,120,255)
+        l.Text=string.upper(text); l.TextColor3=Color3.fromRGB(30,70,180)
         l.Font=Enum.Font.GothamBlack; l.TextSize=11
         l.TextXAlignment=Enum.TextXAlignment.Left
         local line=Instance.new("Frame",f); line.Size=UDim2.new(1,0,0,1)
