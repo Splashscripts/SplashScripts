@@ -628,6 +628,15 @@ local function loadMain()
     -- FUN TAB
     -- ════════════════════════════════
     local funTab=createTab("Fun"); local selP=""
+
+    -- Orbit Variablen (müssen vor btn() deklariert sein)
+    local orbitConn; local orbitActive=false
+    local function stopOrbit()
+        orbitActive=false
+        if orbitConn then orbitConn:Disconnect(); orbitConn=nil end
+        if _G._orbitBP then _G._orbitBP:Destroy(); _G._orbitBP=nil end
+        if _G._orbitBP2 then _G._orbitBP2:Destroy(); _G._orbitBP2=nil end
+    end
     local pDropHandle=playerDrop(funTab,"Spieler",function(v) selP=v end)
     btn(funTab,"Liste aktualisieren",function()
         selP=getPlayerList()[1] or ""; notify("OK","Liste aktualisiert.")
@@ -681,12 +690,8 @@ local function loadMain()
     end)
     btn(funTab,"Zu Spieler TP",function() local _,tc=getTarget(selP); if not tc then return end local th,mh=tc:FindFirstChild("HumanoidRootPart"),getHRP(); if th and mh then mh.CFrame=th.CFrame*CFrame.new(3,0,0) end end)
     btn(funTab,"Spieler zu mir TP",function() local _,tc=getTarget(selP); if not tc then return end local th,mh=tc:FindFirstChild("HumanoidRootPart"),getHRP(); if th and mh then th.CFrame=mh.CFrame*CFrame.new(3,0,0) end end)
-    btn(funTab,"Auf Kopf sitzen (Weld)",function() startHeadSit(selP) end)
+    btn(funTab,"Auf Kopf sitzen",function() startHeadSit(selP) end)
     btn(funTab,"Kopf verlassen",function() stopHeadSit(); notify("OK","Kopf verlassen.") end)
-    -- Orbit Fling — kreist um den Spieler
-    local orbitConn; local orbitActive=false
-    local function stopOrbit() orbitActive=false; if orbitConn then orbitConn:Disconnect(); orbitConn=nil end end
-
     btn(funTab,"Orbit Fling (kreisen)",function()
         local tp,tc=getTarget(selP); if not tc then notify("Fehler","Spieler nicht gefunden!",C.err) return end
         local myHRP=getHRP(); if not myHRP then return end
@@ -711,6 +716,7 @@ local function loadMain()
     end)
 
     btn(funTab,"Orbit stoppen",function() stopOrbit(); notify("Orbit","Orbit gestoppt.") end)
+    btn(funTab,"Hochkatapultieren",function()
         local _,tc=getTarget(selP); if not tc then return end
         local hrp=tc:FindFirstChild("HumanoidRootPart"); if not hrp then return end
         local bv2=Instance.new("BodyVelocity"); bv2.MaxForce=Vector3.new(0,1e9,0); bv2.Velocity=Vector3.new(0,2500,0); bv2.Parent=hrp
