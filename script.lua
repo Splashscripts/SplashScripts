@@ -148,8 +148,8 @@ local function showKeyPanel(onSuccess)
     local title = Instance.new("TextLabel", card)
     title.Size = UDim2.new(1,0,0,46); title.Position = UDim2.fromOffset(0,18)
     title.BackgroundTransparency = 1; title.Text = "SPLASH SCRIPTS"
-    title.TextColor3 = Color3.fromRGB(240,248,255); title.Font = Enum.Font.GothamBold
-    title.TextSize = 25; title.ZIndex = 3; title.TextXAlignment = Enum.TextXAlignment.Center
+    title.TextColor3 = Color3.fromRGB(240,248,255); title.Font = Enum.Font.GothamBlack
+    title.TextSize = 26; title.ZIndex = 3; title.TextXAlignment = Enum.TextXAlignment.Center
 
     local sub = Instance.new("TextLabel", card)
     sub.Size = UDim2.new(1,0,0,18); sub.Position = UDim2.fromOffset(0,62)
@@ -216,7 +216,7 @@ local function showKeyPanel(onSuccess)
     local confBtn=Instance.new("TextButton",card); confBtn.Size=UDim2.new(0.88,0,0,42)
     confBtn.Position=UDim2.new(0.06,0,0,262); confBtn.BackgroundColor3=C.accent
     confBtn.Text="Bestätigen"; confBtn.TextColor3=Color3.fromRGB(255,255,255)
-    confBtn.Font=Enum.Font.GothamBold; confBtn.TextSize=14; confBtn.BorderSizePixel=0; confBtn.ZIndex=3
+    confBtn.Font=Enum.Font.GothamBlack; confBtn.TextSize=14; confBtn.BorderSizePixel=0; confBtn.ZIndex=3
     mkCorner(confBtn,11); mkGrad(confBtn,C.accentGlow,C.accentDim,90)
     confBtn.MouseEnter:Connect(function() tween(confBtn,{BackgroundColor3=C.accentGlow}) end)
     confBtn.MouseLeave:Connect(function() tween(confBtn,{BackgroundColor3=C.accent}) end)
@@ -317,7 +317,7 @@ local function loadMain()
     logoLbl.Size=UDim2.new(0,200,1,0); logoLbl.Position=UDim2.fromOffset(14,0)
     logoLbl.BackgroundTransparency=1; logoLbl.Text="SPLASH SCRIPTS"
     logoLbl.TextColor3=Color3.fromRGB(235,245,255)
-    logoLbl.Font=Enum.Font.GothamBold; logoLbl.TextSize=15
+    logoLbl.Font=Enum.Font.GothamBlack; logoLbl.TextSize=15
     logoLbl.TextXAlignment=Enum.TextXAlignment.Left; logoLbl.ZIndex=4
 
     local versionLbl = Instance.new("TextLabel", topBar)
@@ -332,7 +332,7 @@ local function loadMain()
     minimizeBtn.Position=UDim2.new(1,-36,0.5,-13)
     minimizeBtn.BackgroundColor3=Color3.fromRGB(12,22,58)
     minimizeBtn.Text="—"; minimizeBtn.TextColor3=C.textDim
-    minimizeBtn.Font=Enum.Font.GothamBold; minimizeBtn.TextSize=13
+    minimizeBtn.Font=Enum.Font.GothamBlack; minimizeBtn.TextSize=14
     minimizeBtn.BorderSizePixel=0; minimizeBtn.ZIndex=5
     mkCorner(minimizeBtn,6)
     mkStroke(minimizeBtn, Color3.fromRGB(35,70,160), 1)
@@ -463,7 +463,7 @@ local function loadMain()
         btnLabel.BackgroundTransparency=1
         btnLabel.Text=string.upper(name)
         btnLabel.TextColor3=C.textMuted
-        btnLabel.Font=Enum.Font.GothamBold
+        btnLabel.Font=Enum.Font.GothamBlack
         btnLabel.TextSize=12
         btnLabel.TextXAlignment=Enum.TextXAlignment.Left; btnLabel.ZIndex=6
 
@@ -528,7 +528,7 @@ local function loadMain()
         f.BackgroundTransparency=1; f.BorderSizePixel=0; f.LayoutOrder=tab.order; tab.order=tab.order+1
         local l=Instance.new("TextLabel",f); l.Size=UDim2.fromScale(1,1); l.BackgroundTransparency=1
         l.Text=string.upper(text); l.TextColor3=Color3.fromRGB(45,120,255)
-        l.Font=Enum.Font.GothamBold; l.TextSize=10
+        l.Font=Enum.Font.GothamBlack; l.TextSize=11
         l.TextXAlignment=Enum.TextXAlignment.Left
         local line=Instance.new("Frame",f); line.Size=UDim2.new(1,0,0,1)
         line.Position=UDim2.new(0,0,1,-1)
@@ -630,7 +630,7 @@ local function loadMain()
         f.LayoutOrder=tab.order; tab.order=tab.order+1
         mkCorner(f,7); mkStroke(f,C.stroke,1)
         mkGrad(f, EL_C0, EL_C1, 90)
-        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBlack)
         l.Size=UDim2.new(1,-88,1,0); l.Position=UDim2.fromOffset(12,0)
         local keyBtn=Instance.new("TextButton",f); keyBtn.Size=UDim2.fromOffset(68,22)
         keyBtn.Position=UDim2.new(1,-76,0.5,-11); keyBtn.BackgroundColor3=C.accentDim
@@ -656,7 +656,7 @@ local function loadMain()
         f.LayoutOrder=tab.order; tab.order=tab.order+1
         mkCorner(f,7); mkStroke(f,C.stroke,1)
         mkGrad(f, EL_C0, EL_C1, 90)
-        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBold)
+        local l=mkLabel(f,name,12,C.text,Enum.Font.GothamBlack)
         l.Size=UDim2.new(1,-185,1,0); l.Position=UDim2.fromOffset(12,0)
         local dBtn=Instance.new("TextButton",f); dBtn.Size=UDim2.fromOffset(162,22)
         dBtn.Position=UDim2.new(1,-170,0.5,-11); dBtn.BackgroundColor3=C.slider_bg
